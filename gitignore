@@ -1,0 +1,15 @@
+# Sounds
+public/sounds*
+
+
+# Other folders
+sandbox/
+
+# IDE Files
+.settings
+.project
+.buildpath
+.idea
+dw_php_codehinting.config
+/nbproject/
+_notes/

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="container">
+<h1>Lobby List</h1>
+    <div class="right">Your username here</div>
+    <br>
+    <div class="row">
+        <div class="col-md-6 card">
+            <h3>Lobby1</h3>
+            <form action="lobby" method="get">
+                <input type="hidden" name="lobbyId" value="1">
+                <input type="submit" value="Join Lobby">
+            </form>
+        </div>
+        <div class="col-md-6 card">
+            <h3>Lobby2</h3>
+            <form action="lobby" method="get">
+                <input type="hidden" name="lobbyId" value="2">
+                <input type="submit" value="Join Lobby">
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

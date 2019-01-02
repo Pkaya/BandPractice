@@ -1,0 +1,7 @@
+Javascript Functions	turnOrange(); 	camelCase
+Javascript Variables	under_score		lowercase underscore
+JQuery Variables		$username		leading dollar sign
+
+HTML id					txt_username	tag_lowercose
+HTML class				lobby-card		
+OBJECT NOTATION			lobbyName		camelCase

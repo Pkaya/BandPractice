@@ -1,0 +1,16 @@
+.users-info{
+    border: 1px solid black;
+    min-height:300px;
+    min-width: 150px;
+}
+
+.instrument-box{
+    border: 1px solid black;
+    min-height:400px;
+    min-width: 800px;
+}
+
+.chat-box{
+    border: 1px solid purple;
+    min-height:300px;
+}

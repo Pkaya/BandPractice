@@ -1,0 +1,7 @@
+{
+"keys":[
+{"letter":"a","filename":"kick"},
+{"letter":"s","filename":"snare"},
+{"letter":"j","filename":"bob3"}
+]
+}
