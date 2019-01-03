@@ -19,17 +19,28 @@
 
 <body>
 <div class="container">
+    <h1>Enter username and choose instrument</h1>
+    <br>
+    <!--User Info Html-->
     <div id="div_user_form_area" class="row">
-        <form id="frm_user_form" class="form-inline">
-            <div class="form-group">
-                <label for="txt_username">Enter Username </label>
+        <form id="frm_user_form">
+            <div class="form-group form-inline">
+                <label for="txt_username">Username:&nbsp</label>
                 <input type="text" id="txt_username" class="form-control">
                 <br>
                 <input type="submit" class="btn btn-primary" value="Login">
             </div>
+            <div>
+            <div class="form-control"><label class="radio-inline"><input type="radio" value="guitar" class="opt-instrument" name="optinstrument" checked>Guitar</label></div>
+            <div class="form-control"><label class="radio-inline"><input type="radio" value="piano" class="opt-instrument" name="optinstrument">Piano</label></div>
+            <div class="form-control"><label class="radio-inline"><input type="radio" value="drums" class="opt-instrument" name="optinstrument">Drums</label></div>
+            </div>
         </form>
     </div>
+    <br>
 
+
+    <!--Lobby Html-->
     <div id="div_lobby_container">
         <h1>Lobby <%= lobbyId %></h1>
         <input type="hidden" id="hid_lobby_id" value="<%= lobbyId %>">
@@ -53,12 +64,11 @@
                 </form>
             </div>
         </div>
-
     </div>
 </div>
 <!--TEST-->
-<div id="qunit"></div>
-<div id="qunit_frame"></div>
+<!--<div id="qunit"></div>-->
+<!--<div id="qunit_frame"></div>-->
 
 </body>
 </html>

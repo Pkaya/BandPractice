@@ -10,6 +10,7 @@ sandbox/
 .project
 .buildpath
 .idea
+.idea/*
 dw_php_codehinting.config
 /nbproject/
 _notes/

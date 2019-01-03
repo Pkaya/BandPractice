@@ -29,45 +29,43 @@ var io = socket(server);
 var SOCKET_LIST = {};
 var connections = [];
 var users = [];
+var instruments = [];
 
 io.on('connection',function(socket){
     connections.push(socket);
-    // console.log('Connected: %s sockets connected',connections.length );
-    // socket.id = Math.floor(Math.random() * Math.floor(9999) + 1001);
-    // SOCKET_LIST[socket.id] = {"socket": socket};
-    //
-    //
+    updateInstruments();
+
     // var user_ids = Object.keys(SOCKET_LIST);
     // var num_users = Object.keys(SOCKET_LIST).length+1;
 
+    //New user - socket.username = data
+    socket.on("new_user",function(data,callback){
+        callback(true);
+        users.push(data);
+        pre_r(users);
+
+        if(data.instrument!== undefined){
+            instruments.push(data.instrument);
+        }
+
+        updateUsernames();
+    });
 
 
+    //Listen to send_message and emit new_message
     socket.on('send_message',function(data){
         //sent message to every socket
         io.sockets.emit('new_message', {timestamp:getTimeStamp(),message:data.message,username:data.username});
     });
 
-    //updateUserList("connect");
-
     //Delete users
     socket.on('disconnect',function(){
-        users.splice(users.indexOf(socket.username),1);
-        updateUsernames();
         connections.splice(connections.indexOf(socket),1);
+        users.splice(users.indexOf(socket.username),1);
+        instruments.splice(users.indexOf(socket.instrument),1);
+        updateUsernames();
         console.log('Disconnected: %s sockets connected', connections.length )
     });
-
-
-    //New user - socket username = data
-    socket.on("new_user",function(data,callback){
-        callback(true);
-        socket.username = data;
-        users.push(socket.username);
-        console.log(users);
-        updateUsernames();
-    });
-
-    //console.log(SOCKET_LIST[socket.id].username);
 
 
     function getTimeStamp(){
@@ -77,9 +75,12 @@ io.on('connection',function(socket){
     function updateUsernames(){
         io.sockets.emit('get_users',users);
     }
+
+    function updateInstruments(){
+        io.sockets.emit('get_instruments',instruments);
+    }
+
 });
-
-
 
 //Set view engine for templating
 app.set('view engine', 'ejs');
@@ -95,10 +96,25 @@ app.use(function (req, res, next) {
 app.use(bodyParser.urlencoded({extended: true}));
 
 
+//Default page
+app.get('/', function (req, res) {
+    //Include index file  (public files are distributed by express)
+    res.sendFile(base_directory + '/public/lobbies.html');
+});
+
+//Use template for lobby to dynamically display
 app.get('/lobby/:id',function(req,res){
-    res.render(base_directory+'/views/lobby.ejs',{lobbyId: req.body.id});
+    res.render(base_directory+'/views/lobby.ejs',{lobbyId: req.params.id});
 });
 
 
 
+//Debug functions
+function pre_r(array){
+    var string = "----------------------Array----------------------\n";
 
+   for (i= 0;i <array.length; i++){
+       string+= "["+i+"]"+": "+JSON.stringify(array[i])+"\n";
+   }
+   console.log(string);
+}
