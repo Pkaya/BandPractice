@@ -3,31 +3,85 @@ const express = require('express'),
     bodyParser = require('body-parser');
 
 const local = true;
+const dir = __dirname;
+const directory_separator = local ? '\\' : '/';
+const base_directory = dir.substr(0, dir.lastIndexOf(directory_separator));
+
+
+
 var ws_port = 4006;
 var port = 4000;
-
-/**********************************************************************************************************************/
 var WebSocketServer = require("ws").Server;
 var wss = new WebSocketServer({port: ws_port});
 
-wss.on("connection", function (ws) {
-
-    ws.on("message", function (message) {
-
-        if (message === 'exit') {
-            ws.close();
-        } else {
-
-            wss.clients.forEach(function (client) {
-                client.send(message);
-            });
-        }
-    });
-    ws.send("Welcome to Bandpractice chat");
+//Server
+var server = app.listen(port, function () {
+    console.log(' server live at http://localhost:%s/', port);
 });
 
-/**********************************************************************************************************************/
+//Static files
+app.use(express.static(base_directory + '/public'));
 
+
+var socket = require('socket.io');
+var io = socket(server);
+//list of socket connections
+var SOCKET_LIST = {};
+var connections = [];
+var users = [];
+
+io.on('connection',function(socket){
+    connections.push(socket);
+    // console.log('Connected: %s sockets connected',connections.length );
+    // socket.id = Math.floor(Math.random() * Math.floor(9999) + 1001);
+    // SOCKET_LIST[socket.id] = {"socket": socket};
+    //
+    //
+    // var user_ids = Object.keys(SOCKET_LIST);
+    // var num_users = Object.keys(SOCKET_LIST).length+1;
+
+
+
+    socket.on('send_message',function(data){
+        //sent message to every socket
+        io.sockets.emit('new_message', {timestamp:getTimeStamp(),message:data.message,username:data.username});
+    });
+
+    //updateUserList("connect");
+
+    //Delete users
+    socket.on('disconnect',function(){
+        users.splice(users.indexOf(socket.username),1);
+        updateUsernames();
+        connections.splice(connections.indexOf(socket),1);
+        console.log('Disconnected: %s sockets connected', connections.length )
+    });
+
+
+    //New user - socket username = data
+    socket.on("new_user",function(data,callback){
+        callback(true);
+        socket.username = data;
+        users.push(socket.username);
+        console.log(users);
+        updateUsernames();
+    });
+
+    //console.log(SOCKET_LIST[socket.id].username);
+
+
+    function getTimeStamp(){
+        return new Date().getHours()+':'+ new Date().getMinutes()+ ':'+ new Date().getSeconds()+'';
+    }
+
+    function updateUsernames(){
+        io.sockets.emit('get_users',users);
+    }
+});
+
+
+
+//Set view engine for templating
 app.set('view engine', 'ejs');
 
 //displaying what's been requested - debug
@@ -38,53 +92,13 @@ app.use(function (req, res, next) {
 });
 
 
-const dir = __dirname;
-const directory_separator = local ? '\\' : '/';
-const base_directory = dir.substr(0, dir.lastIndexOf(directory_separator));
-//define a static folder for files to be distributed
-app.use(express.static(base_directory + '/public'));
-
 app.use(bodyParser.urlencoded({extended: true}));
 
 
-//Distribute homepage
-app.get('/', function (req, res) {
-    //Include index file  (public files are distributed by express)
-    const index_location = base_directory + '/public/index.html';
-
-    res.sendFile(index_location);
+app.get('/lobby/:id',function(req,res){
+    res.render(base_directory+'/views/lobby.ejs',{lobbyId: req.body.id});
 });
 
 
-app.get('/lobbies', function (req, res) {
-    //Include index file  (public files are distributed by express)
-    var lobby_list_location = base_directory + '/public/lobbies.html';
-    res.sendFile(lobby_list_location);
-});
-
-app.get('/lobby',function(req,res){
-    var lobby_id = req.query.lobbyId;
-    res.render(base_directory+'/views/lobby.ejs',{lobbyName: lobby_id});
-})
 
 
-
-app.use('/checkusername', function (req, res) {
-    //if validates then send true
-    var username = req.query.username;
-
-    if (username != undefined) {
-        if (username.length > 0) {
-            res.send("success");
-        }
-        else{
-            res.send("fail");
-        }
-    }
-});
-
-
-//Server
-app.listen(port, function () {
-    console.log(' server live at http://localhost:%s/', port);
-});

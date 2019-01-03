@@ -2,27 +2,63 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Bandpractice</title>
 </head>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="css/style.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="/css/style.css">
+<link rel="stylesheet" type="text/css" href="/css/qunit-2.4.0.css">
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.dev.js"></script>
+<script src="/js/ws-client.js"></script>
+<script src="/js/qunit-2.4.0.js"></script>
+<script src="/js/tests.js"></script>
+
+
 <body>
 <div class="container">
-    <h1>Lobby<%= lobbyName %></h1>
-    <div class="instrument-box"></div>
-    <br>
-    <div class="row">
-        <div class="col-md-2">
-            <div class="float-left users-info">
-                <h5>Users</h5>
-                <hr>
+    <div id="div_user_form_area" class="row">
+        <form id="frm_user_form" class="form-inline">
+            <div class="form-group">
+                <label for="txt_username">Enter Username </label>
+                <input type="text" id="txt_username" class="form-control">
+                <br>
+                <input type="submit" class="btn btn-primary" value="Login">
+            </div>
+        </form>
+    </div>
+
+    <div id="div_lobby_container">
+        <h1>Lobby <%= lobbyId %></h1>
+        <input type="hidden" id="hid_lobby_id" value="<%= lobbyId %>">
+
+        <div class="instrument-box"></div>
+        <br>
+        <div class="row">
+            <div class="col-md-2">
+                <div class="float-left users-info">
+                    <h5>Users</h5>
+                    <hr>
+                    <ul id="user_list"></ul>
+                </div>
+            </div>
+            <div class="col-md-10">
+                <div id="chat_box"></div>
+                <form id="frm_message" class="form-inline" action="javascript:void(0)">
+                    <label for="txt_message">Message</label>
+                    <input type="text" id="txt_message" autocomplete="off"  required autofocus />
+                    <input type="submit" value="Send">
+                </form>
             </div>
         </div>
-        <div class="col-md-10">
-            <div class="chat-box"></div>
-        </div>
+
     </div>
 </div>
+<!--TEST-->
+<div id="qunit"></div>
+<div id="qunit_frame"></div>
+
 </body>
 </html>
