@@ -1,4 +1,5 @@
 $(document).ready(function(){
+    //test new comment
     var local =  false;
     var local_address = 'http://localhost:4000';
     var server_address = 'http://34.220.11.223';
