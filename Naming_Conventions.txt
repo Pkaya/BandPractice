@@ -5,3 +5,16 @@ JQuery Variables		$username		leading dollar sign
 HTML id					txt_username	tag_lowercose
 HTML class				lobby-card		
 OBJECT NOTATION			lobbyName		camelCase
+
+
+
+ssh -i ~/.ssh/aws_pdev.pem ubuntu@34.220.11.223
+sftp -i ~/.ssh/aws_pdev.pem ubuntu@34.220.11.223
+
+
+server command
+pwd ls
+
+local command
+lpwd, lls, lcd
+

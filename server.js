@@ -2,7 +2,7 @@ const express = require('express'),
     app = express(),
     bodyParser = require('body-parser');
 
-const local = false;
+const local = true;
 const dir = __dirname;
 const directory_separator = local ? '\\' : '/';
 const base_directory = dir.substr(0, dir.lastIndexOf(directory_separator));

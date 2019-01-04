@@ -1,4 +1,10 @@
 $(document).ready(function(){
+    var local =  false;
+    var local_address = 'http://localhost:4000';
+    var server_address = 'http://34.220.11.223';
+
+    var address_to_use = local? local_address : server_address;
+
 
     //DOM Login
     var $user_form_area = $("#div_user_form_area");
@@ -16,11 +22,50 @@ $(document).ready(function(){
     //DOM Instrument
 
 
+
+   //  var arr = [
+   //      { lobby: '1', username: 'test', instrument: 'guitar' },
+   //      { lobby: '1', username: 'gadsf', instrument: 'guitar' } ];
+   //  console.log(arr);
+   //
+   // //arr.splice(arr.indexOf("test"),1);
+   //
+   //  console.log(arr.indexOf("test"));
+
+
+
     //Initially hide the lobby
     $div_lobby_container.hide();
 
     //Emit Socket events
-    var socket = io.connect('http://localhost:4000');
+    var socket = io.connect(address_to_use);
+
+    var drumsounds =
+        [
+            //drums
+            {"char": "q", "filename": "kick"},
+            {"char": "w", "filename": "snare"},
+            {"char": "u", "filename": "bob3"},
+            //guitar
+
+        ];
+
+    var guitarsounds = [
+        {"char": "a", "filename": "key1"},
+        {"char": "s", "filename": "key2"},
+        {"char": "d", "filename": "key3"},
+        {"char": "f", "filename": "key4"},
+        {"char": "g", "filename": "key5"},
+        {"char": "h", "filename": "key6"},
+        {"char": "j", "filename": "guitar1"},
+        {"char": "k", "filename": "guitar2"},
+        {"char": "l", "filename": "guitar3"},
+        {"char": ";", "filename": "guitar4"},
+        {"char": "'", "filename": "guitar5"}
+    ];
+
+
+
 
     //New User - send username lobby and instrument selected
     $user_form.on("submit", function (e) {
@@ -35,6 +80,15 @@ $(document).ready(function(){
                 $div_lobby_container.show();
             }
         });
+
+        switch($sel_instrument_val){
+            case "guitar":
+                buildInstrument(guitarsounds);
+                break;
+            case "drums":
+                buildInstrument(drumsounds);
+        }
+
     });
 
     //Message form submitted
@@ -58,6 +112,7 @@ $(document).ready(function(){
         printToUserList(html);
     });
 
+
     //Update Instruments
     socket.on('get_instruments',function(data){
         //disableInstruments();
@@ -70,7 +125,6 @@ $(document).ready(function(){
                 target_instr.closest('div').hide();
             }
         }
-
         console.log(data);
     });
 
@@ -87,7 +141,96 @@ $(document).ready(function(){
     }
 
 
-    //$(":radio[value=piano]").prop('checked',true);
+
+    //Get Key
+    socket.on("get_key",function(data){
+        console.log(data);
+
+        var filename = "";
+        switch(data.instrument){
+            case "guitar":
+                filename = returnFileName(guitarsounds,data.key);
+                break;
+            case "drums":
+                filename = returnFileName(drumsounds,data.key);
+        }
+
+
+        if (filename !== false) {
+            new Audio('/sounds/'+filename + '.mp3').currentTime = 0;
+            new Audio('/sounds/'+filename + '.mp3').play();
+        }
+
+        console.log(data.filename);
+
+        doBounce($("#div_"+filename), 3, '30px', 50);
+    });
+
+
+    console.log(returnFileName(guitarsounds,'a'));
+
+    function returnFileName(array,char) {
+        for (var i = 0; i < array.length; i++) {
+            if (array[i].char === char) {
+                return array[i].filename;
+            }
+        }
+        return false;
+    }
+
+
+
+//******************************************************
+// Audio functionality
+//******************************************************
+
+    $(document).keypress(function (event) {
+        var keyCode = event.which;
+        var keyChar = String.fromCharCode(event.which);
+        var $sel_instrument_val = $("input[name=optinstrument]:checked").val();
+
+        //Send keycode only if lobby div is visibile and box is active
+        if($div_lobby_container.is(":visible") && $('#instrument_box').hasClass("box-active")){
+            socket.emit('send_key',{instrument: $sel_instrument_val, key:keyChar});
+            console.log(keyCode);
+        }
+    });
+
+
+
+    $("#instrument_box").on ("click",function(){
+        $(this).addClass("box-active");
+        $("#chat_box").removeClass("box-active");
+    });
+
+    $("#chat_box").on ("click",function(){
+        $(this).addClass("box-active");
+        $("#instrument_box").removeClass("box-active");
+    });
+
+
+
+    function buildInstrument(array){
+        for (var i = 0; i < array.length; i++) {
+            var char = array[i].char;
+            var filename = array[i].filename;
+
+            var keydiv = '<div class="col-md-1 audio-box" id="div_'+filename+'">'+filename+'<span>['+char+']</span></div>';
+            $("#instrument_box").append(keydiv);
+
+        }
+    }
+
+    // new Audio('/sounds/guitar1' + '.mp3').play();
+
+
+    function doBounce(element, times, distance, speed) {
+        for(var i = 0; i < times; i++) {
+            element.animate({marginTop: '-='+distance}, speed)
+                .animate({marginTop: '+='+distance}, speed);
+        }
+    }
+
 
 });//end ready
 

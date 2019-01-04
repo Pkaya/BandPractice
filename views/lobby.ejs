@@ -8,44 +8,47 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="/css/style.css">
 <link rel="stylesheet" type="text/css" href="/css/qunit-2.4.0.css">
-
-
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.dev.js"></script>
 <script src="/js/ws-client.js"></script>
 <script src="/js/qunit-2.4.0.js"></script>
 <script src="/js/tests.js"></script>
-
-
 <body>
 <div class="container">
-    <h1>Enter username and choose instrument</h1>
-    <br>
     <!--User Info Html-->
-    <div id="div_user_form_area" class="row">
-        <form id="frm_user_form">
-            <div class="form-group form-inline">
-                <label for="txt_username">Username:&nbsp</label>
-                <input type="text" id="txt_username" class="form-control">
-                <br>
-                <input type="submit" class="btn btn-primary" value="Login">
-            </div>
-            <div>
-            <div class="form-control"><label class="radio-inline"><input type="radio" value="guitar" class="opt-instrument" name="optinstrument" checked>Guitar</label></div>
-            <div class="form-control"><label class="radio-inline"><input type="radio" value="piano" class="opt-instrument" name="optinstrument">Piano</label></div>
-            <div class="form-control"><label class="radio-inline"><input type="radio" value="drums" class="opt-instrument" name="optinstrument">Drums</label></div>
-            </div>
-        </form>
+    <div id="div_user_form_area" class="">
+        <div class="row"><h1>Enter username and choose instrument</h1></div>
+        <br>
+        <div class="row">
+            <form id="frm_user_form">
+                <div class="form-group form-inline">
+                    <label for="txt_username">Username:&nbsp</label>
+                    <input type="text" id="txt_username" class="form-control">
+                    <br>
+                    <input type="submit" class="btn btn-primary" value="Login">
+                </div>
+                <div>
+                <div class="form-control"><label class="radio-inline"><input type="radio" value="guitar" class="opt-instrument" name="optinstrument" checked>Guitar</label></div>
+                <div class="form-control"><label class="radio-inline"><input type="radio" value="piano" class="opt-instrument" name="optinstrument">Piano</label></div>
+                <div class="form-control"><label class="radio-inline"><input type="radio" value="drums" class="opt-instrument" name="optinstrument">Drums</label></div>
+                </div>
+            </form>
+        </div>
     </div>
     <br>
-
 
     <!--Lobby Html-->
     <div id="div_lobby_container">
         <h1>Lobby <%= lobbyId %></h1>
         <input type="hidden" id="hid_lobby_id" value="<%= lobbyId %>">
+        <div class="row">
 
-        <div class="instrument-box"></div>
+        </div>
+        <div id="instrument_box" class="row select-box box-active">
+
+
+        </div>
+
+
         <br>
         <div class="row">
             <div class="col-md-2">
@@ -56,7 +59,7 @@
                 </div>
             </div>
             <div class="col-md-10">
-                <div id="chat_box"></div>
+                <div id="chat_box" class="select-box"></div>
                 <form id="frm_message" class="form-inline" action="javascript:void(0)">
                     <label for="txt_message">Message</label>
                     <input type="text" id="txt_message" autocomplete="off"  required autofocus />

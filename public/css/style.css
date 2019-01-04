@@ -4,7 +4,7 @@
     min-width: 150px;
 }
 
-.instrument-box{
+#instrument_box{
     border: 1px solid black;
     min-height:400px;
     min-width: 800px;
@@ -17,4 +17,15 @@
 
 .opt-instrument{
     margin: 0 10px 0 150px;
+}
+
+
+.audio-box {
+    height: 50px;
+
+    border: 1px solid black;
+}
+
+.box-active {
+    box-shadow: 10px 10px 5px red;
 }
