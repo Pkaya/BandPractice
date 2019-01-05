@@ -29,3 +29,8 @@
 .box-active {
     box-shadow: 10px 10px 5px red;
 }
+
+.gray{
+    color: gray;
+    border-color: gray;
+}

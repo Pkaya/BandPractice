@@ -3,6 +3,25 @@
   <component name="ChangeListManager">
     <list default="true" id="8b181d09-7542-49fc-aaa3-0433ef575445" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/js/ws-client.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/ws-client.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/sounds/bob3.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/sounds/guitar1.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/sounds/guitar2.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/sounds/guitar3.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/sounds/guitar4.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/sounds/guitar5.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/sounds/key1.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/sounds/key2.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/sounds/key3.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/sounds/key4.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/sounds/key5.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/sounds/key6.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/sounds/kick.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/sounds/snare.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/test.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/test.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/server.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/lobby.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/views/lobby.ejs" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -10,13 +29,43 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="DockManager">
+    <window id="1">
+      <content type="file-editors">
+        <state>
+          <leaf>
+            <file pinned="false" current-in-tab="true">
+              <entry file="file://$USER_HOME$/Dropbox/3.SOFT_352_18/week4/p/week4_exercises.js">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="1241">
+                    <caret line="154" column="30" selection-start-line="154" selection-start-column="30" selection-end-line="154" selection-end-column="30" />
+                    <folding>
+                      <element signature="n#!!doc" expanded="true" />
+                    </folding>
+                  </state>
+                </provider>
+              </entry>
+            </file>
+          </leaf>
+        </state>
+      </content>
+    </window>
+  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/public/js/ws-client.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="493">
-              <caret line="29" column="24" lean-forward="true" selection-start-line="29" selection-start-column="24" selection-end-line="29" selection-end-column="24" />
+            <state relative-caret-position="617">
+              <caret line="243" column="74" selection-start-line="243" selection-start-column="74" selection-end-line="243" selection-end-column="74" />
+              <folding>
+                <element signature="e#4196#4649#0" />
+                <element signature="e#6429#6470#0" />
+                <element signature="e#6494#6558#0" />
+                <element signature="e#6577#6728#0" />
+                <element signature="e#6721#6857#0" />
+                <element signature="e#6881#7068#0" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -24,17 +73,11 @@
       <file pinned="true" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/server.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="20" selection-start-line="20" selection-end-line="20" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/views/lobby.ejs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="748">
-              <caret line="44" column="14" selection-start-line="44" selection-start-column="14" selection-end-line="44" selection-end-column="14" />
+            <state relative-caret-position="685">
+              <caret line="89" column="53" selection-start-line="89" selection-start-column="48" selection-end-line="89" selection-end-column="53" />
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -42,8 +85,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/css/style.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="476">
-              <caret line="28" column="11" selection-start-line="28" selection-start-column="1" selection-end-line="28" selection-end-column="11" />
+            <state relative-caret-position="595">
+              <caret line="35" column="1" selection-start-line="35" selection-start-column="1" selection-end-line="35" selection-end-column="1" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/views/lobby.ejs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="396">
+              <caret line="29" column="99" lean-forward="true" selection-start-line="29" selection-start-column="99" selection-end-line="29" selection-end-column="99" />
             </state>
           </provider>
         </entry>
@@ -51,8 +103,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/test.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2856">
-              <caret line="168" column="8" selection-start-line="168" selection-start-column="8" selection-end-line="168" selection-end-column="8" />
+            <state relative-caret-position="357">
+              <caret line="21" selection-start-line="21" selection-end-line="21" />
             </state>
           </provider>
         </entry>
@@ -79,20 +131,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>prints</find>
-      <find>pin</find>
-      <find>john</find>
-      <find>updateuser</find>
-      <find>console.log</find>
-      <find>updateUserList</find>
-      <find>connection</find>
-      <find>hide</find>
-      <find>new_user</find>
-      <find>list</find>
-      <find>username</find>
-      <find>qunit-fi</find>
-      <find>getelementbyid</find>
-      <find>milis</find>
       <find>runtime</find>
       <find>txt_message</find>
       <find>printToUser</find>
@@ -104,11 +142,25 @@
       <find>charsounds</find>
       <find>returnfi</find>
       <find>switch</find>
-      <find>guitarsounds</find>
       <find>file</find>
-      <find>Audio</find>
       <find>.addclass</find>
       <find>base_dir</find>
+      <find>console.log</find>
+      <find>instrumen</find>
+      <find>socked</find>
+      <find>helper</find>
+      <find>Object</find>
+      <find>Audio</find>
+      <find>buildins</find>
+      <find>bounce</find>
+      <find>buildi</find>
+      <find>buildinst</find>
+      <find>buildinstrument</find>
+      <find>guitarsounds</find>
+      <find>drumsounds</find>
+      <find>sounds</find>
+      <find>buildin</find>
+      <find>drums</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -128,18 +180,19 @@
         <option value="$PROJECT_DIR$/public/index.html" />
         <option value="$PROJECT_DIR$/public/js/qunit-2.4.0.js" />
         <option value="$PROJECT_DIR$/public/js/tests.js" />
-        <option value="$PROJECT_DIR$/public/test.html" />
         <option value="$PROJECT_DIR$/public/lobbies.html" />
+        <option value="$PROJECT_DIR$/public/js/temp.js" />
+        <option value="$PROJECT_DIR$/public/test.html" />
         <option value="$PROJECT_DIR$/public/css/style.css" />
-        <option value="$PROJECT_DIR$/views/lobby.ejs" />
         <option value="$PROJECT_DIR$/src/server.js" />
+        <option value="$PROJECT_DIR$/views/lobby.ejs" />
         <option value="$PROJECT_DIR$/public/js/ws-client.js" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="2088" />
-    <option name="y" value="1" />
+    <option name="x" value="1912" />
+    <option name="y" value="-8" />
     <option name="width" value="1936" />
     <option name="height" value="1056" />
   </component>
@@ -163,18 +216,6 @@
             <path>
               <item name="BandPractice" type="b2602c69:ProjectViewProjectNode" />
               <item name="BandPractice" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="css" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BandPractice" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BandPractice" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="sounds" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BandPractice" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BandPractice" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -192,20 +233,20 @@
   <component name="PropertiesComponent">
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$USER_HOME$/Dropbox/3.SOFT_352_18/week4/p/week4_exercises.js" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="preferences.fileTypes" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Pina\Documents\GitHub\BandPractice\public\js" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Pina\Documents\GitHub\BandPractice\public\css" />
       <recent name="C:\Users\Pina\Documents\GitHub\BandPractice\public\js" />
       <recent name="C:\Users\Pina\Documents\GitHub\BandPractice\views" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\Pina\Documents\GitHub\BandPractice\public\js" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -234,16 +275,19 @@
       <workItem from="1546441115883" duration="38640000" />
       <workItem from="1546524491757" duration="2546000" />
       <workItem from="1546621451015" duration="2026000" />
+      <workItem from="1546632336796" duration="572000" />
+      <workItem from="1546639681582" duration="16074000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="81684000" />
+    <option name="totallyTimeSpent" value="98330000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1912" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25799572" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26332623" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -263,28 +307,33 @@
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Database" order="3" />
     </layout>
+    <layout-to-restore>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26332623" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Database Changes" order="8" />
+      <window_info anchor="bottom" id="Version Control" order="9" />
+      <window_info anchor="bottom" id="Terminal" order="10" />
+      <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Database" order="3" />
+    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
   <component name="UnknownFeatures">
     <option featureType="com.intellij.fileTypeFactory" implementationName="*.ejs" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/public/test.html</url>
-          <line>146</line>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/public/test.html</url>
-          <line>145</line>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/gitignore">
@@ -334,34 +383,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/server.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="20" selection-start-line="20" selection-end-line="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/lobby.ejs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="748">
-          <caret line="44" column="14" selection-start-line="44" selection-start-column="14" selection-end-line="44" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/css/style.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="28" column="11" selection-start-line="28" selection-start-column="1" selection-end-line="28" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/test.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2856">
-          <caret line="168" column="8" selection-start-line="168" selection-start-column="8" selection-end-line="168" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Temp/fz3temp-2/config.xml" />
+    <entry file="file://$USER_HOME$/AppData/Local/Temp/fz3temp-2/jenkins.CLI.xml" />
     <entry file="file://$PROJECT_DIR$/public/lobbies.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="204">
@@ -369,20 +392,62 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Temp/fz3temp-2/config.xml">
+    <entry file="file://$USER_HOME$/Dropbox/3.SOFT_352_18/week4/p/week4_exercises.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="561">
-          <caret line="33" column="10" selection-start-line="33" selection-start-column="10" selection-end-line="33" selection-end-column="10" />
+        <state relative-caret-position="1241">
+          <caret line="154" column="30" selection-start-line="154" selection-start-column="30" selection-end-line="154" selection-end-column="30" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Temp/fz3temp-2/jenkins.CLI.xml">
+    <entry file="file://$PROJECT_DIR$/public/js/temp.js">
       <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/test.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="21" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/css/style.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="595">
+          <caret line="35" column="1" selection-start-line="35" selection-start-column="1" selection-end-line="35" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/server.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="685">
+          <caret line="89" column="53" selection-start-line="89" selection-start-column="48" selection-end-line="89" selection-end-column="53" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/lobby.ejs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="396">
+          <caret line="29" column="99" lean-forward="true" selection-start-line="29" selection-start-column="99" selection-end-line="29" selection-end-column="99" />
+        </state>
+      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/js/ws-client.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="29" column="24" lean-forward="true" selection-start-line="29" selection-start-column="24" selection-end-line="29" selection-end-column="24" />
+        <state relative-caret-position="617">
+          <caret line="243" column="74" selection-start-line="243" selection-start-column="74" selection-end-line="243" selection-end-column="74" />
+          <folding>
+            <element signature="e#4196#4649#0" />
+            <element signature="e#6429#6470#0" />
+            <element signature="e#6494#6558#0" />
+            <element signature="e#6577#6728#0" />
+            <element signature="e#6721#6857#0" />
+            <element signature="e#6881#7068#0" />
+          </folding>
         </state>
       </provider>
     </entry>
