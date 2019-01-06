@@ -5,7 +5,7 @@ $(document).ready(function () {
 //**********************************************************************************************************************
     var local = true;
     var local_address = 'http://localhost:4000';
-    var server_address = 'http://34.220.11.223';
+    var server_address = 'http://52.33.25.101';
     var address_to_use = local ? local_address : server_address;
 
     //DOM Login
@@ -78,39 +78,65 @@ $(document).ready(function () {
     // [2] Events which emit to server
     // [3] Events which listen to server and emit to server
 
+    var Message = function (lobby_id, type, message_body) {
+        var self = {
+            lobby_id: lobby_id,
+            type: type,
+            message_body: message_body,
+        };
+        return self;
+    };
+
+    var User = function (lobby_id, username, instrument) {
+        return  {
+            lobby_id: lobby_id,
+            username: username,
+            instrument: instrument,
+        }
+    };
+
+    /**
+     *
+     * @param lobby_id
+     * @param instrument
+     * @param char
+     * @returns {{lobby_id: *, instrument: *, char: *}}
+     * @constructor
+     */
+    var Key = function(lobby_id, instrument,char){
+        return{
+            lobby_id : lobby_id,
+            instrument : instrument,
+            char: char,
+        }
+    }
+
 
     //[1] Listen for new message from server
     socket.on('new_message', function (data) {
+        console.log("msg from server:");
+        console.log(data);
         printMessage(data);
     });
 
+
+
     //[1] Update users
     socket.on('get_users', function (data) {
+        console.log(data);
+
         var html = '';
         loopTrhoughObject(data.users,function(val){
             html += '<li >' + data.users[val].username + '</li>';
         });
-
-        // var temp_obj = data.users;
-        // delete temp_obj[data.my_id];
-        //
-        // loopTrhoughObject(temp_obj,function(val){
-        //     var other_instrument = temp_obj[val].instrument;
-        //
-        //     buildInstrument(other_instrument);
-        // });
-
-        /**
-         * Todo - have all instruments built and show when other users are connected
-         */
-        //build other users instruments
-       // buildInstrument(data.instrument);
 
         printToUserList(html);
     });
 
      //[1] Update instruments to see what's available
     socket.on('get_instruments', function (data) {
+
+
         //disableInstruments();
         //disable and uncheck items in data and default to first other option
         for (i = 0; i < data.length; i++) {
@@ -125,9 +151,9 @@ $(document).ready(function () {
 
     //[1] Get key from server and play correct sounds
     socket.on("get_key", function (data) {
-        //console.log(data);
+        console.log(data);
 
-        var filename = returnFileName(sounds,data.instrument,data.key);
+        var filename = returnFileName(sounds,data.instrument,data.char);
 
         if (filename !== false) {
             new Audio('/sounds/'+'/'+data.instrument+'/' + filename + '.mp3').currentTime = 0;
@@ -138,14 +164,16 @@ $(document).ready(function () {
 
     //[1] Send out keystroke to server
     $(document).keypress(function (event) {
-        var keyCode = event.which;
-        var keyChar = String.fromCharCode(event.which);
+        var key_code = event.which;
+        var key_char = String.fromCharCode(key_code);
         var $sel_instrument_val = $("input[name=optinstrument]:checked").val();
+
+        var key = new Key($lobby_id.val(),$sel_instrument_val,key_char);
 
         //Send keycode only if lobby div is visibile and box is active
         if ($div_lobby_container.is(":visible") && $('#instrument_box').hasClass("box-active")) {
-            socket.emit('send_key', {instrument: $sel_instrument_val, key: keyChar});
-            console.log(keyCode);
+            socket.emit('send_key', key);
+
         }
     });
 
@@ -153,12 +181,11 @@ $(document).ready(function () {
     $user_form.on("submit", function (e) {
         e.preventDefault();
         var $sel_instrument_val = $("input[name=optinstrument]:checked").val();
-
+        var user = new User($lobby_id.val(),$user_name.val(),$sel_instrument_val);
 
         buildInstruments();
 
-        socket.emit('new_user', {lobby: $lobby_id.val(), username: $user_name.val(), instrument: $sel_instrument_val
-        }, function (data) {
+        socket.emit('new_user', user, function (data) {
             //server needs to give the go ahead for username
             if (data) {
                 $user_form_area.hide();
@@ -169,7 +196,8 @@ $(document).ready(function () {
 
     //[2] Send message when message form submitted
     $frm_message.on("submit", function () {
-        socket.emit('send_message', {message: $txt_message.val(), username: $user_name.val()});
+        var message = new Message($lobby_id.val(),"public",$txt_message.val() );
+        socket.emit('send_message', message);
         $txt_message.val("");
     });
 
@@ -195,7 +223,8 @@ $(document).ready(function () {
      * @param data
      */
     function printMessage(data) {
-        $chat_box.append("<p>" + data.timestamp + ":" + "<b>" + data.username + " ></b>" + data.message + "</p>");
+        console.log(data);
+        $chat_box.append("<p>" + data.timestamp + ":" + "<b>" + data.username + " ></b>" + data.message_body + "</p>");
     }
 
 
@@ -268,14 +297,13 @@ $(document).ready(function () {
 
     $("#instrument_box").on("click", function () {
         $(this).addClass("box-active");
-        $("#chat_box").removeClass("box-active");
+        $("#txt_message").removeClass("box-active");
     });
 
-    $("#chat_box").on("click", function () {
+    $("#txt_message").on("click", function () {
         $(this).addClass("box-active");
         $("#instrument_box").removeClass("box-active");
     });
-
 
 });//end ready
 
