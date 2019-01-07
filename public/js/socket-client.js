@@ -14,7 +14,6 @@ $(document).ready(function () {
 
     //DOM Chat
     var $chat_box = $("#chat_box");
-    var $user_list = $("#user_list");
     var $txt_message = $("#txt_message");
     var $user_name = $("#txt_username");
     var $lobby_id = $("#hid_lobby_id");
@@ -29,47 +28,10 @@ $(document).ready(function () {
     var socket = io.connect(address_to_use);
 
 
-    var sounds = {
-        "guitar":[
-            {"char": "a", "filename": "key1"},
-            {"char": "s", "filename": "key2"},
-            {"char": "d", "filename": "key3"},
-            {"char": "f", "filename": "key4"},
-            {"char": "g", "filename": "key5"},
-            {"char": "h", "filename": "key6"},
-            {"char": "j", "filename": "guitar1"},
-            {"char": "k", "filename": "guitar2"},
-            {"char": "l", "filename": "guitar3"},
-            {"char": ";", "filename": "guitar4"},
-            {"char": "'", "filename": "guitar5"}
-        ],
-        "drums":[
-            {"char": "a", "filename": "rim"},
-            {"char": "s", "filename": "snare"},
-            {"char": "d", "filename": "snare2"},
-            {"char": "f", "filename": "kick"},
-            {"char": "g", "filename": "kick2"},
-            {"char": "h", "filename": "bob1"},
-            {"char": "j", "filename": "bob2"},
-            {"char": "k", "filename": "bob3"},
-            {"char": "l", "filename": "bob4"},
-            {"char": ";", "filename": "bob5"},
-        ],
-        "vox":[
-            {"char": "a", "filename": "jyea"},
-            {"char": "s", "filename": "awgh"},
-            {"char": "d", "filename": "hey"},
-            {"char": "f", "filename": "yeauh"},
-            {"char": "g", "filename": "ugh"},
-            {"char": "h", "filename": "aweyeah"},
-            {"char": "j", "filename": "ha"},
-            {"char": "k", "filename": "holdup"},
-            {"char": "l", "filename": "huh"},
-            {"char": ";", "filename": "another"},
-        ]
+    const usermodel = new UserModel();
+    const user_list_observer = new userListObserver('ul_user_list');
 
-    };
-
+    usermodel.addObserver(user_list_observer);
 
 //**********************************************************************************************************************
 // Socket Listen / Emit functionality
@@ -114,23 +76,16 @@ $(document).ready(function () {
 
     //[1] Listen for new message from server
     socket.on('new_message', function (data) {
-        console.log("msg from server:");
-        console.log(data);
+        console.log("new message received");
+       // console.log(data);
+
         printMessage(data);
     });
 
 
-
     //[1] Update users
     socket.on('get_users', function (data) {
-        console.log(data);
-
-        var html = '';
-        loopTrhoughObject(data.users,function(val){
-            html += '<li >' + data.users[val].username + '</li>';
-        });
-
-        printToUserList(html);
+        usermodel.newUserArray(data.users);
     });
 
      //[1] Update instruments to see what's available
@@ -206,32 +161,44 @@ $(document).ready(function () {
 //**********************************************************************************************************************
 
     /**
-     * Apply a function to an object
+     * Loop through associate array {this will be a standard object}
      * @param object
      * @param func
      */
-    function loopTrhoughObject(object,func){
+    function loopthroughAssociativeArray(object,func){
         Object.getOwnPropertyNames(object).forEach(func);
     }
 
-    function printToUserList(message) {
-        $user_list.html(message);
+    function loopthroughObject(object,func){
+        Object.keys(object).forEach(func);
     }
+
 
     /**
      * Print message from server
      * @param data
      */
     function printMessage(data) {
-        console.log(data);
-        $chat_box.append("<p>" + data.timestamp + ":" + "<b>" + data.username + " ></b>" + data.message_body + "</p>");
+        var message = data;
+
+        switch(message.type){
+            case 'public':
+                $chat_box.append("<p>" + data.timestamp + ":" + "<b>" + data.username + " ></b>" + data.message_body + "</p>");
+                break;
+            case 'info_join':
+                $chat_box.append("<p><i class='lobby-join'>" + data.timestamp + ":" + data.message_body + "</i></p>");
+                break;
+            case 'info_leave':
+                $chat_box.append("<p><i class='lobby-leave'>" + data.timestamp + ":" + data.message_body + "</i></p>");
+                break;
+        }
     }
 
 
     function returnFileName(object, instrument, char) {
         var file_name = "";
 
-        loopTrhoughObject(object,function(val,idx){
+        loopthroughAssociativeArray(object,function(val,idx){
             var key_name = Object.keys(object)[idx];
 
             if (instrument === key_name) {
@@ -256,7 +223,7 @@ $(document).ready(function () {
     function buildInstruments() {
         var $instrument_box = $("#instrument_box");
 
-        loopTrhoughObject(sounds,function(val,idx){
+        loopthroughAssociativeArray(sounds,function(val,idx){
             var instr_name = Object.keys(sounds)[idx];
 
             var instrument_wrapper = '<div class="row row-instrument">';

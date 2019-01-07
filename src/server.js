@@ -28,10 +28,7 @@ var socket = require('socket.io');
 var io = socket(server);
 
 
-//Keep track of connections and users
-var connections = {};
-var users = {};
-var instruments = [];
+
 
 //
 // factory = {
@@ -67,13 +64,13 @@ var Message = function (lobby_id = false, type, message_body, username) {
         type: type,
         message_body: message_body,
         username: username,
-        timestamp:getTimeStamp(),
+        timestamp: getTimeStamp(),
     }
 };
 
 var User = function (id, lobby_id, username, instrument, type) {
-    return  {
-        id : id,
+    return {
+        id: id,
         lobby_id: lobby_id,
         username: username,
         instrument: instrument,
@@ -81,26 +78,18 @@ var User = function (id, lobby_id, username, instrument, type) {
     }
 };
 
-var Key = function(lobby_id, instrument,char){
-    return{
-        lobby_id : lobby_id,
-        instrument : instrument,
+var Key = function (lobby_id, instrument, char) {
+    return {
+        lobby_id: lobby_id,
+        instrument: instrument,
         char: char,
     }
-}
+};
 
-// var User = function (id, lobby_id, username, instrument, type) {
-//
-//     var self = {
-//         self.username = username;
-//     self.instrument = instrument;
-//     self.type = type;
-// }
-//     return self;
-// };
-
-
-
+//Keep track of connections and users
+var connections = {};
+var users = {};
+var instruments = [];
 
 //**********************************************************************************************************************
 // Socket Listen / Emit functionality
@@ -108,35 +97,43 @@ var Key = function(lobby_id, instrument,char){
 
 //Initiate Socket connection
 io.on('connection', function (socket) {
+
     //Create random number as no db used
-
     var id = Math.floor(Math.random() * 9999) + 1001;
+    //Give this socket the new id
     socket.id = id;
-
+    //Add to connections array
     connections[socket.id] = socket;
+
+    socket.on("request_lobby_info",function(data){
+        socket.emit('get_lobby_info',users)
+    });
 
     // New user
     socket.on("new_user", function (data, callback) {
         callback(true);
-        var user = {};
-
-        var user_type = returnUserType(connections,data);
+        var user = data;
+        var connection_message = user.username + " has joined the lobby";
+        var user_type = returnUserType(connections, user);
+        //Give user the dynamically created id
         user.id = socket['id'];
-        Object.assign(user, data);
 
-
+        //Add to users array
         users[socket.id] = user;
 
+        //assign lobby to object
+        socket.lobby = chkProperty(user, 'lobby_id');
 
-        socket.lobby = chkProperty(data,'lobby_id');
 
         //If there is an instrument push it to instruments array
-        if (chkProperty(data,instruments)) {
-            instruments.push(data.instrument);
+        if (chkProperty(user, instruments)) {
+            instruments.push(user.instrument);
         }
 
-        updateUsernames(connections, id,socket.lobby);
-        updateInstruments(chkProperty(data,'lobby_id'));
+        //Send messages to client
+        emitToLobby(connections, 'new_message', socket.lobby, new Message(false, 'info_join', connection_message, ''));
+        updateUsernames(connections, id, socket.lobby);
+        updateInstruments(chkProperty(user, 'lobby_id'));
     });
 
 
@@ -151,8 +148,9 @@ io.on('connection', function (socket) {
         message.username = users[socket.id].username;
 
         //emit to users in this lobby
-        emitToLobby(connections,'new_message',this_lobby_id,message)
+        emitToLobby(connections, 'new_message', this_lobby_id, message)
     });
+
 
     socket.on("send_key", function (data) {
         console.log(data);
@@ -160,22 +158,28 @@ io.on('connection', function (socket) {
         var key = {};
         Object.assign(key, data);
 
-        emitToLobby(connections,'get_key',this_lobby_id,key)
+        emitToLobby(connections, 'get_key', this_lobby_id, key)
         //io.sockets.emit('get_key', {instrument: data.instrument, char: data.char});
     });
 
+
     //Delete users
     socket.on("disconnect", function () {
-        updateUsernames(connections, id,socket.lobby);
-        console.log(socket.lobby);
+
+
+        var connection_message = chkProperty(users[socket.id], 'username') + " has left the lobby";
+
+        var lobby = socket.lobby;
+        delete users[socket.id];
+
+        updateUsernames(connections, id, lobby);
+
+        //send user connected message
+        emitToLobby(connections, 'new_message', socket.lobby, new Message(false, 'info_leave', connection_message, ''));
         updateInstruments();
         delete connections[socket.id];
-        delete users[socket.id];
+
     });
-
-
-
-    //instruments.splice(instruments.indexOf(socket.instrument),1);
 
     console.log('Disconnected: %s sockets connected', Object.keys(connections).length)
 });
@@ -185,13 +189,11 @@ io.on('connection', function (socket) {
 // Socket Functions
 //**********************************************************************************************************************
 
-function emitToLobby(conn_array,event_name,lobby_id,obj_to_emit){
-    for (var i in conn_array){
+function emitToLobby(conn_array, event_name, lobby_id, obj_to_emit) {
+    for (var i in conn_array) {
         let connection = conn_array[i];
 
-
-        if(connection.lobby === lobby_id){
-
+        if (connection.lobby === lobby_id) {
             connection.emit(event_name, obj_to_emit);
         }
     }
@@ -203,26 +205,28 @@ function emitToLobby(conn_array,event_name,lobby_id,obj_to_emit){
  * @param id
  * @param lobby_id
  */
-function updateUsernames(connections,id,lobby_id) {
-   var same_lobby_users = {};
+function updateUsernames(connections, id, lobby_id) {
+    var same_lobby_users = [];
 
-   console.log(users);
-
-    for (var i in users){
+    for (var i in users) {
         let user = users[i];
-        if (chkProperty(user,'lobby_id') === lobby_id){
-            same_lobby_users[i] = user;
+        if (chkProperty(user, 'lobby_id') === lobby_id) {
+            same_lobby_users.push(user);
         }
     }
-    emitToLobby(connections,'get_users',lobby_id, {users: same_lobby_users, my_id:id });
+
+    emitToLobby(connections, 'get_users', lobby_id, {
+        users: same_lobby_users,
+        my_id: id,
+    });
 }
 
 function updateInstruments() {
-    io.sockets.emit('get_instruments',instruments);
+    io.sockets.emit('get_instruments', instruments);
 }
 
-function sendConnectionInfoMsg(){
-    io.sockets.emit('get_connection_info',instruments);
+function sendConnectionInfoMsg() {
+    io.sockets.emit('get_connection_info', instruments);
 }
 
 /**
@@ -231,11 +235,13 @@ function sendConnectionInfoMsg(){
  * @param prop
  * @returns {*}
  */
-function chkProperty(object,prop){
-    if (object.hasOwnProperty(prop)){
-       return (object[prop]);
+function chkProperty(object, prop) {
+    if (object !== undefined) {
+        if (object.hasOwnProperty(prop)) {
+            return (object[prop]);
+        }
     }
-    return undefined;
+    return '';
 }
 
 /**
@@ -244,16 +250,14 @@ function chkProperty(object,prop){
  * @param data
  * @returns {string}
  */
-function returnUserType(connections, data){
+function returnUserType(connections, data) {
     var user_type = '';
 
-    if (Object.keys(connections).length === 1){
+    if (Object.keys(connections).length === 1) {
         user_type = "leader";
-    }
-    else if (Object.keys(connections).length > 1){
+    } else if (Object.keys(connections).length > 1) {
         user_type = "regular";
-    }
-    else if (chkProperty(data,'spectator')){
+    } else if (chkProperty(data, 'spectator')) {
         user_type = "spectator";
     }
     return user_type;

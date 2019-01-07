@@ -3,26 +3,283 @@
 <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+        .square{
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            margin: 10px;
+            color: white;
+            background-color:black;
+        }
+
+    </style>
 </head>
+
 <body>
+<div class="square" id="elementObserver1"></div>
+<hr>
+<button type="button" onclick="model.increment()">Increment</button>
+
+
+<button type="button" onclick="addUserJane()">Add Jane users</button>
+<button type="button" onclick="addUserJohn()">Add John users</button>
+<br>
+
+<ul id="ul_user_list"></ul>
 <script>
+
+
+    class ConnectionModel{
+        constructor(){
+            this.connections = {};
+            this.users = {};
+            this.instruments = [];
+            this.count = 0;
+            this.observers = [];
+        }
+
+        increaseCount(){
+            this.count++
+        }
+
+        decreaseCount(){
+            this.count--;
+        }
+
+        deleteUser(lobby_id){
+            delete this.users[socket.id];
+            delete this.connections[socket.id];
+            this.notifyObservers();
+        }
+
+        addObserver(o){
+            this.observers.push(o);
+        }
+
+        notifyObservers(){
+            for (let o of  this.observers){
+                o.update(this);
+            }
+        }
+    }
+
+
+    class emitGetUserObserver{
+        constructor(){
+        }
+
+        update(model){
+            var same_lobby_users = [];
+
+            for (var i in users){
+                let user = users[i];
+                if (chkProperty(user,'lobby_id') === lobby_id){
+                    same_lobby_users.push(user);
+                }
+            }
+            console.log(same_lobby_users);
+
+            emitToLobby(connections,'get_users',lobby_id, {users: same_lobby_users, my_id:id });
+        }
+    }
+
+
+
+
+    class userListObserver{
+        constructor(elementId){
+            this.element = document.getElementById(elementId);
+        }
+
+        update(model){
+            var count = model.count;
+            var users = model.users;
+
+            console.log(users);
+
+            var html = '';
+
+            users.forEach(function(user){
+                html += '<li >' + user.username + '</li>';
+            });
+
+
+
+            this.element.innerHTML = html;
+        }
+    }
+
+
+
+    class UserModel {
+        constructor(){
+            this.count = 0;
+            this.users = [];
+            //all observers will be notified
+            this.observers = [];
+        }
+
+        incrementUsers(user){
+            this.count++;
+            this.users.push(user);
+            this.notifyObservers();
+        }
+
+
+        addObserver(o){
+            this.observers.push(o);
+        }
+
+        notifyObservers(){
+            for (let o of  this.observers){
+                o.update(this);
+            }
+        }
+    }
+    class userListObserver{
+        constructor(elementId){
+            this.element = document.getElementById(elementId);
+        }
+
+        update(model){
+            var count = model.count;
+            var users = model.users;
+
+            console.log(users);
+
+            var html = '';
+
+            users.forEach(function(user){
+                html += '<li >' + user.username + '</li>';
+            });
+
+
+
+            this.element.innerHTML = html;
+        }
+    }
+
+    function loopTrhoughObject(object,func){
+        Object.getOwnPropertyNames(object).forEach(func);
+    }
+
+    const usermodel = new UserModel();
+    const euserListObserver = new userListObserver('ul_user_list');
+
+    usermodel.addObserver(euserListObserver);
+
+    function testGetusers(){
+        users = usermodel.getUsers();
+    }
+
+    function addUserJane(){
+        var jane = {"username": "jane", "lobby_id": "2"};
+        usermodel.incrementUsers(jane)
+    }
+
+    function addUserJohn(){
+        var john = {"username": "john", "lobby_id": "1"};
+        usermodel.incrementUsers(john);
+    }
+
+
+
+
+    class NumberModel {
+        constructor(){
+            this.num = 0;
+            this.color = 'red';
+            //all observers will be notified
+            this.observers = [];
+        }
+
+        increment(){
+            const colors = ['orange','red','green','blue'];
+            this.num++;
+            this.color = colors[Math.floor(Math.random()* colors.length)];
+
+            this.notifyObservers();
+        }
+
+        addObserver(o){
+            this.observers.push(o);
+        }
+
+        notifyObservers(){
+            for (let o of  this.observers){
+                o.update(this);
+            }
+        }
+    }
+
+    class ElementObserver{
+        constructor(elementId){
+            this.element = document.getElementById(elementId);
+        }
+
+        update(model){
+            console.log(model.num);
+            this.element.innerHTML = model.num;
+            this.element.style.backgroundColor = model.color;
+        }
+    }
+
+    class ConsoleObserver{
+        constructor(){
+
+        }
+
+        update(model){
+            console.log("The number is"+model.num+"The color is: "+model.color);
+        }
+    }
+
+    const model = new NumberModel();
+    const eObs1 = new ElementObserver('elementObserver1');
+    const cObs = new ConsoleObserver();
+
+    model.addObserver(cObs);
+    model.addObserver(eObs1);
+
+   // <button type="button" onclick="model.increment()">Increment</button>
     var sample = {
         "1971": {lobby: "1", username: "test", instrument: "guitar"},
-        "3430": {lobby: "1", username: "ghdfg", instrument: "guitar"}
+        "3430": {lobby: "1", username: "ghdfg", instrument: "guitar"},
+        "3431": {lobby: "2", username: "Userlobby2", instrument: "vox"}
     };
 
-    console.log(sample[1971].username);
-    console.log(Object.getOwnPropertyNames(sample));
+    var sample2 = [
+       {lobby: "1", username: "test", instrument: "guitar"},
+       {lobby: "1", username: "ghdfg", instrument: "guitar"},
+       {lobby: "2", username: "Userlobby2", instrument: "vox"},
+        {lobby: "2", username: "lsud", instrument: "guitar"},
+    ];
+
+    //console.log(sample[1971].username);
+    //console.log(Object.getOwnPropertyNames(sample));
 
 
     Object.getOwnPropertyNames(sample).forEach(function (val, idx, array) {
-        console.log(sample[val]);
-        console.log(sample[val].lobby);
+        //console.log(sample[val]);
+        //console.log(sample[val].lobby);
     });
 
     var firstKey = Object.keys(sample)[0];
 
-    console.log(firstKey)
+    //console.log(firstKey)
+
+
+
+
+    //THIS WORKS - filtering
+    var lobby2_arr = sample2.filter(function(user){
+       return  user.lobby === "2";
+    });
+
+
+
 
 </script>
 </body>

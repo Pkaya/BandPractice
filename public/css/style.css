@@ -34,3 +34,11 @@
     color: gray;
     border-color: gray;
 }
+
+.lobby-join{
+    color: forestgreen;
+}
+
+.lobby-leave{
+    color: red;
+}
