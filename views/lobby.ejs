@@ -23,19 +23,38 @@
         <div class="row"><h1>Enter username and choose instrument</h1></div>
         <br>
         <div class="row">
-            <form id="frm_user_form">
-                <div class="form-group form-inline">
-                    <label for="txt_username">Username:&nbsp</label>
-                    <input type="text" id="txt_username" class="form-control">
-                    <br>
-                    <input type="submit" class="btn btn-primary" value="Login">
-                </div>
-                <div>
-                <div class="form-control"><label class="radio-inline"><input type="radio" value="guitar" class="opt-instrument" name="optinstrument" checked>Guitar</label></div>
-                <div class="form-control"><label class="radio-inline"><input type="radio" value="vox" class="opt-instrument" name="optinstrument">Vox</label></div>
-                <div class="form-control"><label class="radio-inline"><input type="radio" value="drums" class="opt-instrument" name="optinstrument">Drums</label></div>
-                </div>
-            </form>
+            <div class="col-md-4">
+                <form id="frm_user_form">
+                    <div class="form-group form-inline">
+                        <label for="txt_username">Username:&nbsp</label>
+                        <input type="text" id="txt_username" class="form-control">
+                        <br>
+                        <input type="submit" class="btn btn-primary" value="Login">
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-8">
+                <div id="div_errors" class="row hidden"></div>
+            </div>
+
+        </div>
+        <br>
+        <div class="row">
+            <div class="form-control hidden col-md-4"><label class="radio-inline">
+                <input type="radio" value="guitar" class="opt-instrument" name="optinstrument" checked>Guitar</label>
+                <br>
+                <img class="instr-image" src="/images/guitar.svg" alt="Guitar">
+            </div>
+            <div class="form-control hidden col-md-4"><label class="radio-inline">
+                <input type="radio" value="drums" class="opt-instrument" name="optinstrument">Drums</label>
+                <br>
+                <img class="instr-image" src="/images/drums.svg" alt="Drums">
+            </div>
+            <div class="form-control hidden col-md-4"><label class="radio-inline">
+                <input type="radio" value="vox" class="opt-instrument" name="optinstrument">Vox</label>
+                <br>
+                <img class="instr-image" src="/images/vox.svg" alt="Vox">
+            </div>
         </div>
     </div>
     <br>

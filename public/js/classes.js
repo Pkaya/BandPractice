@@ -33,7 +33,11 @@ class userListObserver{
 
         var html = '';
         users.forEach(function(user){
-            html += '<li data-id="'+user.id+'" >' + user.username + '</li>';
+
+            var img = '<img class="leader-img" src="/images/crown.png">';
+            var img_inc = user.type == 'leader' ? img : '';
+
+            html += '<li data-id="'+user.id+'" >' + user.username +' '+ img_inc+'</li>';
         });
         this.element.innerHTML= html;
     }

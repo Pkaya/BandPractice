@@ -11,11 +11,11 @@ $(document).ready(function () {
     //DOM Login
     var $user_form_area = $("#div_user_form_area");
     var $user_form = $("#frm_user_form");
-
+    var $user_name = $("#txt_username");
+    var $errors = $("#div_errors");
     //DOM Chat
     var $chat_box = $("#chat_box");
     var $txt_message = $("#txt_message");
-    var $user_name = $("#txt_username");
     var $lobby_id = $("#hid_lobby_id");
     var $frm_message = $("#frm_message");
     var $div_lobby_container = $("#div_lobby_container");
@@ -25,7 +25,8 @@ $(document).ready(function () {
     $div_lobby_container.hide();
 
     //Emit Socket events
-    var socket = io.connect(address_to_use);
+    var query_lobby = 'lobby_id='+$lobby_id.val();
+    var socket = io.connect(address_to_use,{query:query_lobby});
 
 
     const usermodel = new UserModel();
@@ -71,7 +72,7 @@ $(document).ready(function () {
             instrument : instrument,
             char: char,
         }
-    }
+    };
 
 
     //[1] Listen for new message from server
@@ -85,24 +86,34 @@ $(document).ready(function () {
 
     //[1] Update users
     socket.on('get_users', function (data) {
+        console.log(data);
         usermodel.newUserArray(data.users);
     });
 
+    // //[1] Poll instruments
+    // setInterval(function(){
+    //     socket.emit('request_instruments', {lobby_id: $lobby_id.val()});
+    // },1000);
+
      //[1] Update instruments to see what's available
     socket.on('get_instruments', function (data) {
-
-
+        console.log(data);
         //disableInstruments();
         //disable and uncheck items in data and default to first other option
         for (i = 0; i < data.length; i++) {
+
             var instrument = data[i];
             var target_instr = $(":radio[value=" + instrument + "]");
             //find radio element
             if (target_instr !== undefined) {
-                target_instr.closest('div').hide();
+                target_instr.closest('div').removeClass('hidden');
             }
         }
     });
+
+
+
+
 
     //[1] Get key from server and play correct sounds
     socket.on("get_key", function (data) {
@@ -135,18 +146,43 @@ $(document).ready(function () {
     //[2] Send this new user - send username lobby and instrument selected to server
     $user_form.on("submit", function (e) {
         e.preventDefault();
-        var $sel_instrument_val = $("input[name=optinstrument]:checked").val();
-        var user = new User($lobby_id.val(),$user_name.val(),$sel_instrument_val);
 
-        buildInstruments();
+        $.post(address_to_use+'/checkusername',{username:$user_name.val()},function (data) {
+            if(data.valid){
+                $errors.addClass('hidden');
+                var $sel_instrument_val = $("input[name=optinstrument]:checked").val();
+                var user = new User($lobby_id.val(),$user_name.val(),$sel_instrument_val);
 
-        socket.emit('new_user', user, function (data) {
-            //server needs to give the go ahead for username
-            if (data) {
-                $user_form_area.hide();
-                $div_lobby_container.show();
+                buildInstruments();
+
+                socket.emit('new_user', user, function (data) {
+                    //server needs to give the go ahead for username
+                    if (data) {
+                        $user_form_area.hide();
+                        $div_lobby_container.show();
+                    }
+                });
+            }else{
+                $errors.removeClass('hidden');
+                $errors.html(data.error_msg);
             }
-        });
+        })
+
+
+        //make request to server to check usernames
+
+        // var $sel_instrument_val = $("input[name=optinstrument]:checked").val();
+        // var user = new User($lobby_id.val(),$user_name.val(),$sel_instrument_val);
+        //
+        // buildInstruments();
+        //
+        // socket.emit('new_user', user, function (data) {
+        //     //server needs to give the go ahead for username
+        //     if (data) {
+        //         $user_form_area.hide();
+        //         $div_lobby_container.show();
+        //     }
+        // });
     });
 
     //[2] Send message when message form submitted
@@ -248,7 +284,7 @@ $(document).ready(function () {
      * @param distance
      * @param speed
      */
-    function doBounce(element, times, distance, speed) {
+    function doBounce(element, times = 3, distance = '30px', speed =50) {
         for (var i = 0; i < times; i++) {
             element.animate({marginTop: '-=' + distance}, speed)
                 .animate({marginTop: '+=' + distance}, speed);

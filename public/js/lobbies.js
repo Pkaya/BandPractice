@@ -18,31 +18,50 @@ $(document).ready(function () {
 
     socket.emit('request_lobby_info', {});
 
+    socket.on("get_lobby_info", function (data) {
+        console.log(data);
 
-    // setInterval(function(){
-    //     socket.emit('request_lobby_info', {});
-    // },2000);
+        var lobby1 = [];
+        var lobby2 = [];
 
-    // socket.on("get_lobby_info",function(data){
-    //     console.log(data);
-    // })
+        for (let i = 0; i < data.length; i++) {
+            var row = data[i];
 
+            if (row.lobby_id == 1) {
+                lobby1.push(row);
+            } else {
+                lobby2.push(row);
+            }
+        }
 
-    var test_obj = {
-        1584: {lobby_id: "1", username: "Pina", instrument: "guitar", id: 1584},
-        2320: {lobby_id: "1", username: "John", instrument: "vox", id: 2320}
-    };
+        var instruments_lobby1 = Object.keys(lobby1).map(function (k) {
+            return lobby1[k].instrument;
+        });
 
-    var test_arr2 = [
-        {lobby_id: "1", username: "Pina", instrument: "guitar", id: 1584},
-        {lobby_id: "1", username: "John", instrument: "vox", id: 2320}
-    ];
+        var instruments_lobby2 =  Object.keys(lobby2).map(function(k){
+            return lobby2[k].instrument;
+        });
 
-    var remove_keys = Object.keys(test_obj).map(function (key, idx) {
-        return test_obj[key];
+        var no_users_lobby1 = Object.keys(instruments_lobby1).length;
+        var no_users_lobby2 = Object.keys(instruments_lobby2).length;
+
+        $("#lobby1_usercount").html("Users ("+no_users_lobby1+"/3)");
+        $("#lobby2_usercount").html("Users ("+no_users_lobby2+"/3)");
+
+        var instr_lobby1_html = '';
+        var instr_lobby2_html = '';
+
+        for (let i = 0; i< instruments_lobby1.length;i++){
+            instr_lobby1_html+= "<li>"+instruments_lobby1[i]+"</li>";
+        }
+
+        for (let i = 0; i< instruments_lobby2.length;i++){
+            instr_lobby2_html+= "<li>"+instruments_lobby2[i]+"</li>";
+        }
+
+        $("#ul_lobby1_instruments").html(instr_lobby1_html);
+        $("#ul_lobby2_instruments").html(instr_lobby2_html);
     });
-
-    console.log(remove_keys);
 
 });//end ready
 

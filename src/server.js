@@ -89,7 +89,7 @@ var Key = function (lobby_id, instrument, char) {
 //Keep track of connections and users
 var connections = {};
 var users = {};
-var instruments = [];
+var available_instruments = ['guitar','vox','drums'];
 
 //**********************************************************************************************************************
 // Socket Listen / Emit functionality
@@ -97,6 +97,7 @@ var instruments = [];
 
 //Initiate Socket connection
 io.on('connection', function (socket) {
+    socket.lobby = socket.handshake.query['lobby_id'];
 
     //Create random number as no db used
     var id = Math.floor(Math.random() * 9999) + 1001;
@@ -105,8 +106,12 @@ io.on('connection', function (socket) {
     //Add to connections array
     connections[socket.id] = socket;
 
+
+    emitToLobby(connections, 'get_instruments', socket.lobby, available_instruments);
+
+
     socket.on("request_lobby_info",function(data){
-        socket.emit('get_lobby_info',users)
+        socket.emit('get_lobby_info',rawObject(users))
     });
 
     // New user
@@ -114,26 +119,36 @@ io.on('connection', function (socket) {
         callback(true);
         var user = data;
         var connection_message = user.username + " has joined the lobby";
-        var user_type = returnUserType(connections, user);
+        var user_type = returnUserType(users, user);
+        user.type = user_type;
+
+        console.log("user type:" + user_type);
+
         //Give user the dynamically created id
         user.id = socket['id'];
 
         //Add to users array
         users[socket.id] = user;
 
-        //assign lobby to object
-        socket.lobby = chkProperty(user, 'lobby_id');
+
+        //Get users instrument
+        var instrument = chkProperty(user, 'instrument');
+        var lobby_id = socket.lobby;
 
 
-        //If there is an instrument push it to instruments array
-        if (chkProperty(user, instruments)) {
-            instruments.push(user.instrument);
+
+        //Remove this users instrument from the instruments array
+        if (instrument) {
+            var index = available_instruments.indexOf(instrument);
+            if (index > -1) {
+                available_instruments.splice(index, 1);
+            }
         }
 
         //Send messages to client
-        emitToLobby(connections, 'new_message', socket.lobby, new Message(false, 'info_join', connection_message, ''));
-        updateUsernames(connections, id, socket.lobby);
-        updateInstruments(chkProperty(user, 'lobby_id'));
+        emitToLobby(connections, 'new_message', lobby_id, new Message(false, 'info_join', connection_message, ''));
+        updateUsernames(connections, id, lobby_id);
+        emitToLobby(connections, 'get_instruments', lobby_id, available_instruments);
     });
 
 
@@ -159,24 +174,39 @@ io.on('connection', function (socket) {
         Object.assign(key, data);
 
         emitToLobby(connections, 'get_key', this_lobby_id, key)
-        //io.sockets.emit('get_key', {instrument: data.instrument, char: data.char});
+    });
+
+    socket.on("request_instruments",function(data){
+        console.log(data);
+        emitToLobby(connections, 'get_instruments', chkProperty(data,'lobby_id'), available_instruments);
     });
 
 
     //Delete users
     socket.on("disconnect", function () {
-
-
-        var connection_message = chkProperty(users[socket.id], 'username') + " has left the lobby";
-
+        var username = chkProperty(users[socket.id], 'username');
+        var instrument = chkProperty(users[socket.id], 'instrument');
+        var connection_message = username + " has left the lobby";
         var lobby = socket.lobby;
+
         delete users[socket.id];
 
         updateUsernames(connections, id, lobby);
 
         //send user connected message
-        emitToLobby(connections, 'new_message', socket.lobby, new Message(false, 'info_leave', connection_message, ''));
-        updateInstruments();
+        if(username.length > 0) {
+            emitToLobby(connections, 'new_message', lobby, new Message(false, 'info_leave', connection_message, ''));
+        }
+
+        //Make instrument available
+        if (instrument) {
+            var index = available_instruments.indexOf(instrument);
+            if (index === -1) {
+                available_instruments.push(instrument);
+            }
+        }
+
+        emitToLobby(connections, 'get_instruments', lobby, available_instruments);
         delete connections[socket.id];
 
     });
@@ -221,13 +251,6 @@ function updateUsernames(connections, id, lobby_id) {
     });
 }
 
-function updateInstruments() {
-    io.sockets.emit('get_instruments', instruments);
-}
-
-function sendConnectionInfoMsg() {
-    io.sockets.emit('get_connection_info', instruments);
-}
 
 /**
  * returns property of object if it exists
@@ -245,17 +268,17 @@ function chkProperty(object, prop) {
 }
 
 /**
- * Returns user type
- * @param connections
+ *
+ * @param users
  * @param data
  * @returns {string}
  */
-function returnUserType(connections, data) {
+function returnUserType(users, data) {
     var user_type = '';
 
-    if (Object.keys(connections).length === 1) {
+    if (Object.keys(users).length === 0) {
         user_type = "leader";
-    } else if (Object.keys(connections).length > 1) {
+    } else if (Object.keys(users).length >= 1) {
         user_type = "regular";
     } else if (chkProperty(data, 'spectator')) {
         user_type = "spectator";
@@ -286,9 +309,7 @@ app.use(function (req, res, next) {
     next();
 });
 
-
 app.use(bodyParser.urlencoded({extended: true}));
-
 
 //Default page
 app.get('/', function (req, res) {
@@ -301,14 +322,63 @@ app.get('/lobby/:id', function (req, res) {
     res.render(base_directory + '/views/lobby.ejs', {lobbyId: req.params.id});
 });
 
+app.use('/checkusername',function(req,res){
+    var username = req.body.username;
+    res.send(checkUserNameValid(username));
+});
 
-// function pre_o(object){
-//     Object.getOwnPropertyNames(object).forEach(function(val,idx,array){
-//         console.log(object[idx]);
-//         console.log(object[val]);
-//     });
-// }
 
+function checkUserNameValid(username){
+    var valid = false;
+    var msg = '';
+
+    if(username.length <4){
+        msg = "The username is too short (must be longer than 8 characters)";
+        valid = false;
+    }
+    else if (username.length > 13){
+        msg = "The username is too long (max 13 characters)";
+        valid = false;
+    }
+    else if (userNameTaken(username) === true){
+        valid = false;
+        msg = "This username is already taken";
+    }
+    else{
+        valid = true;
+    }
+
+    return {error_msg:msg, valid: valid,users: users}
+}
+
+/**
+ * Check if Username already exists
+ * @param username
+ * @returns {boolean}
+ */
+function userNameTaken(username){
+    var remove_keys = Object.keys(users).map(function (key) {
+        return users[key];
+    });
+
+    var usernamesArray = Object.keys(remove_keys).map(function(k){
+        return remove_keys[k].username;
+    });
+
+    //Return an array of usernames
+   return Boolean (Object.values(usernamesArray).indexOf(username) > -1);
+}
+
+/**
+ * Returns object without keys
+ * @param object
+ * @returns {*[]}
+ */
+function rawObject(object){
+   return Object.keys(object).map(function (key) {
+        return object[key];
+    });
+}
 
 
 
