@@ -12,10 +12,10 @@
 <script src="/js/qunit-2.4.0.js"></script>
 
 <script src="/js/sounds.js"></script>
-<script src="/js/classes.js"></script>
+<script src="/js/observer.js"></script>
+<script src="/js/socket-client.js"></script>
 <script src="/js/socket-client-tests.js"></script>
 
-<script src="/js/socket-client.js"></script>
 <body>
 <div class="container">
     <!--User Info Html-->
@@ -29,7 +29,7 @@
                         <label for="txt_username">Username:&nbsp</label>
                         <input type="text" id="txt_username" class="form-control">
                         <br>
-                        <input type="submit" class="btn btn-primary" value="Login">
+                        <input type="submit" id="btn_submit" class="btn btn-primary" value="Login">
                     </div>
                 </form>
             </div>
@@ -43,17 +43,17 @@
             <div class="form-control hidden col-md-4"><label class="radio-inline">
                 <input type="radio" value="guitar" class="opt-instrument" name="optinstrument" checked>Guitar</label>
                 <br>
-                <img class="instr-image" src="/images/guitar.svg" alt="Guitar">
+                <img id="img_guitar "class="instr-image" src="/images/guitar.svg" alt="Guitar">
             </div>
             <div class="form-control hidden col-md-4"><label class="radio-inline">
                 <input type="radio" value="drums" class="opt-instrument" name="optinstrument">Drums</label>
                 <br>
-                <img class="instr-image" src="/images/drums.svg" alt="Drums">
+                <img id="img_drums" class="instr-image" src="/images/drums.svg" alt="Drums">
             </div>
             <div class="form-control hidden col-md-4"><label class="radio-inline">
                 <input type="radio" value="vox" class="opt-instrument" name="optinstrument">Vox</label>
                 <br>
-                <img class="instr-image" src="/images/vox.svg" alt="Vox">
+                <img id="img_vox" class="instr-image" src="/images/vox.svg" alt="Vox">
             </div>
         </div>
     </div>
@@ -66,9 +66,7 @@
         <div class="row">
 
         </div>
-        <div id="instrument_box" class="row select-box box-active">
-
-        </div>
+        <div id="instrument_box" class="row select-box box-active"></div>
 
         <br>
         <div class="row">
@@ -83,14 +81,14 @@
                 <div id="chat_box" class="select-box"></div>
                 <form id="frm_message" class="form-inline" action="javascript:void(0)">
                     <label for="txt_message">Message</label>
-                    <input type="text" id="txt_message" autocomplete="off"  required autofocus />
+                    <input type="text" id="txt_message" autocomplete="off" required autofocus/>
                     <input type="submit" value="Send">
                 </form>
             </div>
         </div>
     </div>
 </div>
-<!--TEST-->
+
 <!--<div id="qunit"></div>-->
 <!--<div id="qunit_frame"></div>-->
 

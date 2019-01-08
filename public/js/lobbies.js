@@ -63,5 +63,10 @@ $(document).ready(function () {
         $("#ul_lobby2_instruments").html(instr_lobby2_html);
     });
 
+    setInterval(function(){
+        socket.emit('request_lobby_info', {});
+    },2000);
+
 });//end ready
+
 

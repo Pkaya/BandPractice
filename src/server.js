@@ -1,7 +1,6 @@
 //**********************************************************************************************************************
 // Initiation Code
 //**********************************************************************************************************************
-
 const express = require('express'),
     app = express(),
     bodyParser = require('body-parser');
@@ -17,45 +16,15 @@ var port = local ? 4000 : 80;
 
 //Server
 var server = app.listen(port, function () {
-    console.log(' server live at port: %s', port);
+    console.log('Server live at port: %s', port);
 });
 
 //Static files
 app.use(express.static(base_directory + '/public'));
 
-
+//Declare socket.io
 var socket = require('socket.io');
 var io = socket(server);
-
-
-
-
-//
-// factory = {
-//     create: function (entity,lobby_id) {
-//         var e;
-//
-//         switch (entity) {
-//             case 'user':
-//                 e = {
-//                     lobby_id: lobby_id,
-//                 };
-//                 break;
-//
-//             case 'key':
-//                 e =  {
-//                     lobby_id: lobby_id,
-//             };
-//             break;
-//             case 'message':
-//                 e = {
-//                     lobby_id: lobby_id,
-//                     timestamp:getTimeStamp(),
-//                 }
-//         }
-//         return e;
-//     }
-// };
 
 
 var Message = function (lobby_id = false, type, message_body, username) {
@@ -68,31 +37,15 @@ var Message = function (lobby_id = false, type, message_body, username) {
     }
 };
 
-var User = function (id, lobby_id, username, instrument, type) {
-    return {
-        id: id,
-        lobby_id: lobby_id,
-        username: username,
-        instrument: instrument,
-        type: type
-    }
-};
-
-var Key = function (lobby_id, instrument, char) {
-    return {
-        lobby_id: lobby_id,
-        instrument: instrument,
-        char: char,
-    }
-};
-
-//Keep track of connections and users
+//Keep track of connections, users and instruments
 var connections = {};
 var users = {};
-var available_instruments = ['guitar','vox','drums'];
+var available_instruments_1 = ['guitar','vox','drums'];
+var available_instruments_2 = ['guitar','vox','drums'];
+
 
 //**********************************************************************************************************************
-// Socket Listen / Emit functionality
+// Socket Listen and Emit functionality
 //**********************************************************************************************************************
 
 //Initiate Socket connection
@@ -106,12 +59,13 @@ io.on('connection', function (socket) {
     //Add to connections array
     connections[socket.id] = socket;
 
+    //Array to use
+    var available_instr_array  =  socket.lobby == 1 ? available_instruments_1 : available_instruments_2;
 
-    emitToLobby(connections, 'get_instruments', socket.lobby, available_instruments);
-
+    emitToLobby(connections, 'get_instruments', socket.lobby, available_instr_array);
 
     socket.on("request_lobby_info",function(data){
-        socket.emit('get_lobby_info',rawObject(users))
+        socket.emit('get_lobby_info',rawObject(users));
     });
 
     // New user
@@ -139,16 +93,19 @@ io.on('connection', function (socket) {
 
         //Remove this users instrument from the instruments array
         if (instrument) {
-            var index = available_instruments.indexOf(instrument);
+            var index = available_instr_array.indexOf(instrument);
             if (index > -1) {
-                available_instruments.splice(index, 1);
+                available_instr_array.splice(index, 1);
             }
         }
+
+        console.log(available_instruments_1);
+        console.log(available_instruments_2);
 
         //Send messages to client
         emitToLobby(connections, 'new_message', lobby_id, new Message(false, 'info_join', connection_message, ''));
         updateUsernames(connections, id, lobby_id);
-        emitToLobby(connections, 'get_instruments', lobby_id, available_instruments);
+        emitToLobby(connections, 'get_instruments', lobby_id, available_instr_array);
     });
 
 
@@ -166,57 +123,54 @@ io.on('connection', function (socket) {
         emitToLobby(connections, 'new_message', this_lobby_id, message)
     });
 
-
+    //Send the pressed key to users
     socket.on("send_key", function (data) {
-        console.log(data);
         var this_lobby_id = socket.lobby;
-        var key = {};
-        Object.assign(key, data);
 
-        emitToLobby(connections, 'get_key', this_lobby_id, key)
-    });
-
-    socket.on("request_instruments",function(data){
-        console.log(data);
-        emitToLobby(connections, 'get_instruments', chkProperty(data,'lobby_id'), available_instruments);
+        emitToLobby(connections, 'get_key', this_lobby_id, data)
     });
 
 
     //Delete users
     socket.on("disconnect", function () {
+        console.log("disconnect requested");
         var username = chkProperty(users[socket.id], 'username');
         var instrument = chkProperty(users[socket.id], 'instrument');
         var connection_message = username + " has left the lobby";
-        var lobby = socket.lobby;
+        var lobby_id = socket.lobby;
+
+        //Array to use
+        var available_instr_array  = lobby_id == 1 ? available_instruments_1 : available_instruments_2;
 
         delete users[socket.id];
 
-        updateUsernames(connections, id, lobby);
+        updateUsernames(connections, id, lobby_id);
 
         //send user connected message
         if(username.length > 0) {
-            emitToLobby(connections, 'new_message', lobby, new Message(false, 'info_leave', connection_message, ''));
+            emitToLobby(connections, 'new_message', lobby_id, new Message(false, 'info_leave', connection_message, ''));
         }
 
         //Make instrument available
         if (instrument) {
-            var index = available_instruments.indexOf(instrument);
+            var index = available_instr_array.indexOf(instrument);
             if (index === -1) {
-                available_instruments.push(instrument);
+                available_instr_array.push(instrument);
             }
         }
 
-        emitToLobby(connections, 'get_instruments', lobby, available_instruments);
+        emitToLobby(connections, 'get_instruments', lobby_id, available_instr_array);
         delete connections[socket.id];
 
     });
+
 
     console.log('Disconnected: %s sockets connected', Object.keys(connections).length)
 });
 
 
 //**********************************************************************************************************************
-// Socket Functions
+// Socket functions and helper methods
 //**********************************************************************************************************************
 
 function emitToLobby(conn_array, event_name, lobby_id, obj_to_emit) {
@@ -299,17 +253,18 @@ function getTimeStamp() {
 // Serving and Routing functionality
 //**********************************************************************************************************************
 
+//User body parser
+app.use(bodyParser.urlencoded({extended: true}));
+
 //Set view engine for templating
 app.set('view engine', 'ejs');
 
-//displaying what's been requested - debug
+//Display what's been requested - debug
 app.use(function (req, res, next) {
-
     console.log(`${req.method} request for '${req.url}'`);
     next();
 });
 
-app.use(bodyParser.urlencoded({extended: true}));
 
 //Default page
 app.get('/', function (req, res) {
@@ -322,12 +277,21 @@ app.get('/lobby/:id', function (req, res) {
     res.render(base_directory + '/views/lobby.ejs', {lobbyId: req.params.id});
 });
 
+//API - Check username
 app.use('/checkusername',function(req,res){
     var username = req.body.username;
     res.send(checkUserNameValid(username));
 });
 
+//**********************************************************************************************************************
+// Other functionality
+//**********************************************************************************************************************
 
+/**
+ * Check if user name is valid
+ * @param username
+ * @returns {{error_msg: string, valid: boolean, users}}
+ */
 function checkUserNameValid(username){
     var valid = false;
     var msg = '';
@@ -352,7 +316,7 @@ function checkUserNameValid(username){
 }
 
 /**
- * Check if Username already exists
+ * Check if user name already exists
  * @param username
  * @returns {boolean}
  */
@@ -370,7 +334,7 @@ function userNameTaken(username){
 }
 
 /**
- * Returns object without keys
+ * Returns object without first keys
  * @param object
  * @returns {*[]}
  */

@@ -1,12 +1,15 @@
+
+var local = true;
+var local_address = 'http://localhost:4000';
+var server_address = 'http://52.33.25.101';
+var address_to_use = local ? local_address : server_address;
+
 $(document).ready(function () {
 
 //**********************************************************************************************************************
 // Initiation Code
 //**********************************************************************************************************************
-    var local = true;
-    var local_address = 'http://localhost:4000';
-    var server_address = 'http://52.33.25.101';
-    var address_to_use = local ? local_address : server_address;
+
 
     //DOM Login
     var $user_form_area = $("#div_user_form_area");
@@ -28,7 +31,7 @@ $(document).ready(function () {
     var query_lobby = 'lobby_id='+$lobby_id.val();
     var socket = io.connect(address_to_use,{query:query_lobby});
 
-
+    //Observer pattern
     const usermodel = new UserModel();
     const user_list_observer = new userListObserver('ul_user_list');
 
@@ -41,6 +44,14 @@ $(document).ready(function () {
     // [2] Events which emit to server
     // [3] Events which listen to server and emit to server
 
+    /**
+     * Message class
+     * @param lobby_id
+     * @param type
+     * @param message_body
+     * @returns {{lobby_id: *, type: *, message_body: *}}
+     * @constructor
+     */
     var Message = function (lobby_id, type, message_body) {
         var self = {
             lobby_id: lobby_id,
@@ -50,6 +61,14 @@ $(document).ready(function () {
         return self;
     };
 
+    /**
+     * User class
+     * @param lobby_id
+     * @param username
+     * @param instrument
+     * @returns {{lobby_id: *, username: *, instrument: *}}
+     * @constructor
+     */
     var User = function (lobby_id, username, instrument) {
         return  {
             lobby_id: lobby_id,
@@ -59,7 +78,7 @@ $(document).ready(function () {
     };
 
     /**
-     *
+     *Key class
      * @param lobby_id
      * @param instrument
      * @param char
@@ -74,7 +93,6 @@ $(document).ready(function () {
         }
     };
 
-
     //[1] Listen for new message from server
     socket.on('new_message', function (data) {
         console.log("new message received");
@@ -83,22 +101,15 @@ $(document).ready(function () {
         printMessage(data);
     });
 
-
     //[1] Update users
     socket.on('get_users', function (data) {
         console.log(data);
         usermodel.newUserArray(data.users);
     });
 
-    // //[1] Poll instruments
-    // setInterval(function(){
-    //     socket.emit('request_instruments', {lobby_id: $lobby_id.val()});
-    // },1000);
-
      //[1] Update instruments to see what's available
     socket.on('get_instruments', function (data) {
-        console.log(data);
-        //disableInstruments();
+
         //disable and uncheck items in data and default to first other option
         for (i = 0; i < data.length; i++) {
 
@@ -110,10 +121,6 @@ $(document).ready(function () {
             }
         }
     });
-
-
-
-
 
     //[1] Get key from server and play correct sounds
     socket.on("get_key", function (data) {
@@ -147,6 +154,7 @@ $(document).ready(function () {
     $user_form.on("submit", function (e) {
         e.preventDefault();
 
+        //Send ajax request
         $.post(address_to_use+'/checkusername',{username:$user_name.val()},function (data) {
             if(data.valid){
                 $errors.addClass('hidden');
@@ -205,10 +213,6 @@ $(document).ready(function () {
         Object.getOwnPropertyNames(object).forEach(func);
     }
 
-    function loopthroughObject(object,func){
-        Object.keys(object).forEach(func);
-    }
-
 
     /**
      * Print message from server
@@ -231,6 +235,13 @@ $(document).ready(function () {
     }
 
 
+    /**
+     * Return file name of requested instrument and key
+     * @param object
+     * @param instrument
+     * @param char
+     * @returns {string}
+     */
     function returnFileName(object, instrument, char) {
         var file_name = "";
 
@@ -296,7 +307,9 @@ $(document).ready(function () {
 // Temp functionality
 //******************************************************
 
-
+    $(".instr-image").on("click",function(){
+       $(this).closest('.form-control').find(':radio').prop("checked",true);
+    });
 
     $("#instrument_box").on("click", function () {
         $(this).addClass("box-active");
