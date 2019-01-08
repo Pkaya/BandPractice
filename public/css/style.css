@@ -39,14 +39,6 @@
     color: forestgreen;
 }
 
-.lobby-leave{
-    color: red;
-}
-
-#div_errors{
-    color:red;
-}
-
 .hidden{
     display:none;
 }
@@ -65,4 +57,8 @@
 .leader-img{
     width: 15px;
     height: auto;
+}
+
+.red {
+    color: red;
 }

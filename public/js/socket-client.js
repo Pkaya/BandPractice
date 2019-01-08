@@ -184,6 +184,7 @@ $(document).ready(function () {
         $txt_message.val("");
     });
 
+
 //**********************************************************************************************************************
 // //Functions and Helper methods
 //**********************************************************************************************************************
@@ -213,7 +214,7 @@ $(document).ready(function () {
                 $chat_box.append("<p><i class='lobby-join'>" + data.timestamp + ":" + data.message_body + "</i></p>");
                 break;
             case 'info_leave':
-                $chat_box.append("<p><i class='lobby-leave'>" + data.timestamp + ":" + data.message_body + "</i></p>");
+                $chat_box.append("<p><i class='red'>" + data.timestamp + ":" + data.message_body + "</i></p>");
                 break;
         }
     }

@@ -70,9 +70,10 @@ io.on('connection', function (socket) {
 
     // New user
     socket.on("new_user", function (data, callback) {
-        callback(true);
+
         var user = data;
         var connection_message = user.username + " has joined the lobby";
+        callback(true);
         var user_type = returnUserType(users, user);
         user.type = user_type;
 
@@ -89,8 +90,6 @@ io.on('connection', function (socket) {
         var instrument = chkProperty(user, 'instrument');
         var lobby_id = socket.lobby;
 
-
-
         //Remove this users instrument from the instruments array
         if (instrument) {
             var index = available_instr_array.indexOf(instrument);
@@ -99,8 +98,7 @@ io.on('connection', function (socket) {
             }
         }
 
-        console.log(available_instruments_1);
-        console.log(available_instruments_2);
+
 
         //Send messages to client
         emitToLobby(connections, 'new_message', lobby_id, new Message(false, 'info_join', connection_message, ''));

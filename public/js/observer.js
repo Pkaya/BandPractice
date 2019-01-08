@@ -24,7 +24,6 @@ class UserModel {
     }
 }
 
-
 class userListObserver{
     constructor(elementId){
         this.element = document.getElementById(elementId);
@@ -37,9 +36,10 @@ class userListObserver{
         users.forEach(function(user){
 
             var img = '<img class="leader-img" src="/images/crown.png">';
-            var img_inc = user.type == 'leader' ? img : '';
+            var img_inc = user.type === 'leader' ? img : '';
+            var leader = user.type === 'leader' ? "true" : "false";
 
-            html += '<li data-id="'+user.id+'" >' + user.username +' '+ img_inc+'</li>';
+            html += '<li class="li-users"data-id="'+user.id+'" data-leader="'+leader+'">' + user.username +' '+ img_inc+'</li>';
         });
         this.element.innerHTML= html;
     }
