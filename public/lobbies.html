@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.dev.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/js/lobbies.js"></script>
+
 </head>
 <body>
 <div class="container">
@@ -12,11 +16,23 @@
     <br>
     <div class="row">
         <div class="col-md-6 card">
-            <h3>Lobby1</h3>
+            <h3>Lobby 1</h3>
+            <div class="card lobby-inner-card">
+                <p id="lobby1_usercount"></p>
+                <h6>Instruments taken</h6>
+                <ul id="ul_lobby1_instruments"></ul>
+            </div>
+            <br>
             <a href="lobby/1" class="btn btn-info" role="button">Join Lobby</a>
         </div>
         <div class="col-md-6 card">
-            <h3>Lobby2</h3>
+            <h3>Lobby 2</h3>
+            <div class="card lobby-inner-card">
+               <p id="lobby2_usercount"></p>
+                <h6>Instruments taken:</h6>
+                <ul id="ul_lobby2_instruments"></ul>
+            </div>
+            <br>
             <a href="lobby/2" class="btn btn-info" role="button">Join Lobby</a>
         </div>
     </div>

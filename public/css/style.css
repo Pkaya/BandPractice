@@ -1,7 +1,7 @@
 .users-info{
     border: 1px solid black;
     min-height:300px;
-    min-width: 150px;
+    min-width: 180px;
 }
 
 #instrument_box{
@@ -28,4 +28,37 @@
 
 .box-active {
     box-shadow: 10px 10px 5px red;
+}
+
+.gray{
+    color: gray;
+    border-color: gray;
+}
+
+.lobby-join{
+    color: forestgreen;
+}
+
+.hidden{
+    display:none;
+}
+
+.instr-image {
+    padding:20px;
+    width: 150px;
+    height: auto;
+    text-align: center;
+}
+
+.lobby-inner-card{
+    min-height: 180px;
+    background: floralwhite;
+}
+.leader-img{
+    width: 15px;
+    height: auto;
+}
+
+.red {
+    color: red;
 }
