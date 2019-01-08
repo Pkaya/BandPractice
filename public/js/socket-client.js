@@ -175,22 +175,6 @@ $(document).ready(function () {
                 $errors.html(data.error_msg);
             }
         })
-
-
-        //make request to server to check usernames
-
-        // var $sel_instrument_val = $("input[name=optinstrument]:checked").val();
-        // var user = new User($lobby_id.val(),$user_name.val(),$sel_instrument_val);
-        //
-        // buildInstruments();
-        //
-        // socket.emit('new_user', user, function (data) {
-        //     //server needs to give the go ahead for username
-        //     if (data) {
-        //         $user_form_area.hide();
-        //         $div_lobby_container.show();
-        //     }
-        // });
     });
 
     //[2] Send message when message form submitted
