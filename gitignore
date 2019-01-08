@@ -3,7 +3,7 @@ public/sounds*
 
 
 # Other folders
-sandbox/*
+sandbox/
 
 # IDE Files
 .settings
