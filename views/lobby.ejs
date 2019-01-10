@@ -10,87 +10,109 @@
 <link rel="stylesheet" type="text/css" href="/css/qunit-2.4.0.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.dev.js"></script>
 <script src="/js/qunit-2.4.0.js"></script>
-
-<script src="/js/sounds.js"></script>
-<script src="/js/observer.js"></script>
-<script src="/js/socket-client.js"></script>
-<script src="/js/socket-client-tests.js"></script>
-
 <body>
+
+<div class="test-float">
+    <div class="lobby-navbar" role="navigation">
+        <h2>Lobby <%= lobbyId %></h2>
+        <input type="hidden" id="hid_lobby_id" value="<%= lobbyId %>">
+    </div>
+
+
+    <div class="user-navbar users-info" role="navigation">
+        <h5>Users</h5>
+        <hr>
+        <ul id="ul_user_list"></ul>
+    </div>
+</div>
+<div id="header-container" class="container-fluid">
+    <div class="">
+        <h1>BandPractice <span class="signed-in">signed in as:<span class="span-username"></span></span></h1>
+        <p><button class="btn btn-xs btn-default btn-logout">logout</button></p>
+    </div>
+</div>
 <div class="container">
     <!--User Info Html-->
     <div id="div_user_form_area" class="">
-        <div class="row"><h1>Enter username and choose instrument</h1></div>
+        <div class="row"><h1>Choose instrument and enter a username</h1></div>
         <br>
         <div class="row">
-            <div class="col-md-4">
-                <form id="frm_user_form">
-                    <div class="form-group form-inline">
-                        <label for="txt_username">Username:&nbsp</label>
-                        <input type="text" id="txt_username" class="form-control">
-                        <br>
-                        <input type="submit" id="btn_submit" class="btn btn-primary" value="Login">
-                    </div>
-                </form>
+            <div class="form-control radio-inline pressed-border col-md-3 hidden"><label>
+                <input type="radio" value="guitar" class="opt-instrument hidden" name="optinstrument">Guitar</label>
+                <p><img id="img_guitar " class="instr-image" src="/images/guitar.svg" alt="Guitar"></p>
             </div>
-            <div class="col-md-8">
-                <div id="div_errors" class="row red hidden"></div>
+            <div class="form-control radio-inline col-md-3 hidden"><label>
+                <input type="radio" value="drums" class="opt-instrument hidden" name="optinstrument">Drums</label>
+                <p><img id="img_drums" class="instr-image" src="/images/drums.svg" alt="Drums"></p>
             </div>
-
+            <div class="form-control radio-inline col-md-3 hidden"><label>
+                <input type="radio" value="vox" class="opt-instrument hidden" name="optinstrument">Vox</label>
+                <p><img id="img_vox" class="instr-image" src="/images/vox.svg" alt="Vox"></p>
+            </div>
         </div>
         <br>
         <div class="row">
-            <div class="form-control hidden col-md-4"><label class="radio-inline">
-                <input type="radio" value="guitar" class="opt-instrument" name="optinstrument" checked>Guitar</label>
-                <br>
-                <img id="img_guitar "class="instr-image" src="/images/guitar.svg" alt="Guitar">
+            <div class="col-md-5">
+                <form id="frm_user_form">
+                    <div class="form-group form-inline">
+                        <div class="input-group">
+                            <label for="txt_username">Username:&nbsp</label>
+                            <input type="text" id="txt_username" class="form-control" autocomplete="off">
+                            <div class="input-group-append">
+                                <span class="input-group-text length-box"></span>
+                                <input type="submit" id="btn_submit" class="btn btn-primary col-md-10" value="Login">
+                            </div>
+                            <br>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="form-control hidden col-md-4"><label class="radio-inline">
-                <input type="radio" value="drums" class="opt-instrument" name="optinstrument">Drums</label>
-                <br>
-                <img id="img_drums" class="instr-image" src="/images/drums.svg" alt="Drums">
-            </div>
-            <div class="form-control hidden col-md-4"><label class="radio-inline">
-                <input type="radio" value="vox" class="opt-instrument" name="optinstrument">Vox</label>
-                <br>
-                <img id="img_vox" class="instr-image" src="/images/vox.svg" alt="Vox">
+            <div class="col-md-7">
+                <div id="div_errors" class="row red hidden"></div>
             </div>
         </div>
     </div>
     <br>
 
-    <!--Lobby Html-->
+    <!--Chat and Instruments-->
     <div id="div_lobby_container">
-        <h1>Lobby <%= lobbyId %></h1>
-        <input type="hidden" id="hid_lobby_id" value="<%= lobbyId %>">
         <div class="row">
-
+            <div id="instrument_box" class="col-md-12 select-box box-active"></div>
         </div>
-        <div id="instrument_box" class="row select-box box-active"></div>
-
         <br>
+
         <div class="row">
-            <div class="col-md-2">
-                <div class="float-left users-info">
-                    <h5>Users</h5>
-                    <hr>
-                    <ul id="ul_user_list"></ul>
-                </div>
-            </div>
-            <div class="col-md-10">
-                <div id="chat_box" class="select-box"></div>
-                <form id="frm_message" class="form-inline" action="javascript:void(0)">
-                    <label for="txt_message">Message</label>
-                    <input type="text" id="txt_message" autocomplete="off" required autofocus/>
-                    <input type="submit" value="Send">
+            <div class="col-md-12">
+            <div id="div_chat_box" class="select-box">
+
+                <!--<form id="frm_message" class="form-inline" action="javascript:void(0)">-->
+                <!--<div class="input-group input-group-lg">-->
+                <!--<label for="txt_message">Message</label>-->
+                <!--<input type="text" id="txt_message" autocomplete="off" required autofocus/>-->
+                <!--<input type="submit" value="Send">-->
+                <!--</form>-->
+
+                <form id="frm_message" class="" action="javascript:void(0)">
+                    <div class="col-lg-12">
+                        <div class="input-group input-group-md">
+                            <input type="text" id="txt_message" autocomplete="off" class="form-control input-md">
+                            <input class="btn btn-primary btn-md" type="submit" value="Send">
+                        </div>
+                    </div>
                 </form>
             </div>
+            </div>
         </div>
+
     </div>
 </div>
 
+<!--Test div containers-->
 <!--<div id="qunit"></div>-->
 <!--<div id="qunit_frame"></div>-->
 
 </body>
+<script src="/js/sounds.js"></script>
+<script src="/js/socket-client.js"></script>
+<!--<script src="/js/socket-client-tests.js"></script>-->
 </html>

@@ -1,35 +1,214 @@
-.users-info{
-    border: 1px solid black;
-    min-height:300px;
-    min-width: 180px;
+body, html {
+    font-family: Verdana;
+    font-size: 14px;
+    background: -moz-radial-gradient(darkslategray 2%, transparent 3%),
+    -moz-radial-gradient(darkslategray 2%, transparent 3%),
+    #ecf6ec;
+    background: -webkit-radial-gradient(darkslategray 2%, transparent 3%),
+    -webkit-radial-gradient(darkslategray 2%, transparent 3%),
+    #ecf6ec;
+    background-position: 0 0, 60px 60px;
+    -webkit-background-size: 40px 40px;
+    -moz-background-size: 40px 40px;
+    background-size: 25px 25px;
+
 }
 
-#instrument_box{
-    border: 1px solid black;
-    min-height:400px;
-    min-width: 800px;
+.container {
+    padding-top: 30px;
+    background-color: white;
 }
 
-#chat_box{
-    border: 1px solid black;
-    min-height:300px;
+#header-container {
+    z-index: 900;
+    border-radius: 0.1em;
+    box-shadow: 0px 5px 5px grey;
+    background: linear-gradient(#0c2f48, #21578b);
+    padding: 15px 15px;
+    text-align: center;
+}
+
+#header-container h1 {
+    color: honeydew;
+    font-family: "Lucida Grande", "Lucida Sans Unicode", Tahoma, Sans-Serif;
+}
+
+/*Css before lobby*/
+
+.signed-in{
+    font-size: 14px;
+    float:right;
+    padding-right:50px;
+
+}
+
+.span-username{
+    font-size:16px;
+    font-weight:bold;
+}
+
+.btn-logout{
+    float:right;
+    margin-right:50px;
+    margin-top: -20px;
+}
+
+.lobby-inner-card{
+    min-height: 180px;
+    background: floralwhite;
+}
+
+/*Css BEFORE entering lobby - before entering username*/
+.div-rad-instr{
+    border: 1px solid #ccc;
+    border-radius: 2em;
+}
+
+.radio-inline{
+    border-radius: 2em;
+    cursor: pointer;
+    text-align: center;
+}
+
+.radio-inline label{
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .opt-instrument{
     margin: 0 10px 0 150px;
 }
 
+.pressed-border{
+    border: 2px solid #b9ddf4;
+    border-radius: 100%;
+    -webkit-box-shadow: 0 0 5px 2px #70bcf4;
+    -moz-box-shadow: 0 0 5px 2px #70bcf4;
+    box-shadow: 0 0 5px 2px #70bcf4;
+}
 
-.audio-box {
-    height: 50px;
+.instr-image {
+    padding:20px;
+    width: 150px;
+    height: auto;
+    text-align: center;
+    cursor:pointer;
+}
 
+.user-header{
+    font-size: 16px;
+}
+
+.length-box{
+    min-width: 50px;
+    margin-right:5px;
+}
+
+/*Css AFTER entering username*/
+
+#frm_message{
+    position: absolute;
+    left:    0;
+    bottom:   0;
+    width:100%;
+}
+
+.users-info{
     border: 1px solid black;
 }
 
-.box-active {
-    box-shadow: 10px 10px 5px red;
+
+.test-float{
+    float:left;
+    display: inline-block;
+    margin-top:133px;
 }
 
+.lobby-navbar {
+    min-height:50px;
+    min-width: 250px;
+    background-color: white;
+    border: 2px solid rgba(45, 134, 214, 0.68);
+    border-radius: 2%;
+    margin-bottom: 300px;
+}
+
+.user-navbar {
+    min-height:400px;
+    min-width: 250px;
+    background-color: white;
+    border: 2px solid rgba(45, 134, 214, 0.68);
+    border-radius: 2%;
+    padding:5px;
+}
+
+.li-users{
+    cursor:pointer;
+}
+
+.context-menu{
+    list-style-type: none;
+    margin: 0px;
+    padding: 0px;
+    border: 1px solid black;
+    font-size: 12px;
+}
+
+.context-menu li{
+    margin: 0px;
+    padding: 0px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.li-guitar{
+   color: green;
+}
+.li-drums{
+    color: blue;
+}
+.li-vox{
+    color: orange;
+}
+
+
+@media screen and (max-width: 692px)   {
+    .user-navbar, .lobby-navbar{
+        width:100%;
+        float:none;
+    }
+}
+
+#instrument_box{
+    min-height:400px;
+    border: #e2e2e2 2px solid;
+}
+
+#div_chat_box{
+    border: #e2e2e2 2px solid;
+    min-height:300px;
+}
+.leader-img{
+    width: 15px;
+    height: auto;
+}
+
+.audio-box {
+    min-height: 50px;
+    overflow-wrap: break-word;
+    text-align: center;
+    border-radius: 5px;
+}
+
+.box-active {
+    border-radius: 5px;
+    border: 2px solid rgba(45, 134, 214, 0.39);
+    -webkit-box-shadow: 0 0 5px 2px #70bcf4;
+    -moz-box-shadow: 0 0 5px 2px #70bcf4;
+    box-shadow: 0 0 50px 2px #70bcf4;
+}
+
+/*Combined Css*/
 .gray{
     color: gray;
     border-color: gray;
@@ -43,22 +222,11 @@
     display:none;
 }
 
-.instr-image {
-    padding:20px;
-    width: 150px;
-    height: auto;
-    text-align: center;
-}
-
-.lobby-inner-card{
-    min-height: 180px;
-    background: floralwhite;
-}
-.leader-img{
-    width: 15px;
-    height: auto;
-}
 
 .red {
     color: red;
+}
+
+.whisper{
+    color: hotpink;
 }

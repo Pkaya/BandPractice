@@ -40,8 +40,8 @@ var Message = function (lobby_id = false, type, message_body, username) {
 //Keep track of connections, users and instruments
 var connections = {};
 var users = {};
-var available_instruments_1 = ['guitar','vox','drums'];
-var available_instruments_2 = ['guitar','vox','drums'];
+var available_instruments_1 = ['guitar', 'vox', 'drums'];
+var available_instruments_2 = ['guitar', 'vox', 'drums'];
 
 
 //**********************************************************************************************************************
@@ -60,12 +60,12 @@ io.on('connection', function (socket) {
     connections[socket.id] = socket;
 
     //Array to use
-    var available_instr_array  =  socket.lobby == 1 ? available_instruments_1 : available_instruments_2;
+    var available_instr_array = socket.lobby == 1 ? available_instruments_1 : available_instruments_2;
 
     emitToLobby(connections, 'get_instruments', socket.lobby, available_instr_array);
 
-    socket.on("request_lobby_info",function(data){
-        socket.emit('get_lobby_info',rawObject(users));
+    socket.on("request_lobby_info", function (data) {
+        socket.emit('get_lobby_info', rawObject(users));
     });
 
     // New user
@@ -73,7 +73,7 @@ io.on('connection', function (socket) {
 
         var user = data;
         var connection_message = user.username + " has joined the lobby";
-        callback(true);
+
         var user_type = returnUserType(users, user);
         user.type = user_type;
 
@@ -81,7 +81,7 @@ io.on('connection', function (socket) {
 
         //Give user the dynamically created id
         user.id = socket['id'];
-
+        callback(user);
         //Add to users array
         users[socket.id] = user;
 
@@ -98,8 +98,6 @@ io.on('connection', function (socket) {
             }
         }
 
-
-
         //Send messages to client
         emitToLobby(connections, 'new_message', lobby_id, new Message(false, 'info_join', connection_message, ''));
         updateUsernames(connections, id, lobby_id);
@@ -110,15 +108,32 @@ io.on('connection', function (socket) {
     //Listen to send_message and emit new_message
     socket.on("send_message", function (data) {
         var this_lobby_id = users[socket.id].lobby_id;
-        var message = {};
 
-        //assign data to message object
-        Object.assign(message, data);
+        var message = data;
+        var recipient = message.recipient;
+
         message.timestamp = getTimeStamp();
         message.username = users[socket.id].username;
 
-        //emit to users in this lobby
-        emitToLobby(connections, 'new_message', this_lobby_id, message)
+        switch (message.type) {
+            case 'private':
+                if (recipient) {
+                    var recipient_id = getUserSocketId(recipient);
+                    connections[recipient_id].emit("new_message", message);
+
+                    //set sender to this socket
+                    message.sender = connections[socket.id].username;
+
+                    if (connections[recipient_id] !== connections[socket.id]) {
+                        connections[socket.id].emit("new_message", message);
+                    }
+                }
+                break;
+            case 'public':
+                //emit to users in this lobby
+                emitToLobby(connections, 'new_message', this_lobby_id, message);
+                break;
+        }
     });
 
     //Send the pressed key to users
@@ -128,6 +143,10 @@ io.on('connection', function (socket) {
         emitToLobby(connections, 'get_key', this_lobby_id, data)
     });
 
+    //Respond to stop timeout
+    socket.on("ping", function () {
+        socket.emit("pong");
+    });
 
     //Delete users
     socket.on("disconnect", function () {
@@ -138,14 +157,14 @@ io.on('connection', function (socket) {
         var lobby_id = socket.lobby;
 
         //Array to use
-        var available_instr_array  = lobby_id == 1 ? available_instruments_1 : available_instruments_2;
+        var available_instr_array = lobby_id == 1 ? available_instruments_1 : available_instruments_2;
 
         delete users[socket.id];
 
         updateUsernames(connections, id, lobby_id);
 
         //send user connected message
-        if(username.length > 0) {
+        if (username.length > 0) {
             emitToLobby(connections, 'new_message', lobby_id, new Message(false, 'info_leave', connection_message, ''));
         }
 
@@ -156,13 +175,10 @@ io.on('connection', function (socket) {
                 available_instr_array.push(instrument);
             }
         }
-
         emitToLobby(connections, 'get_instruments', lobby_id, available_instr_array);
         delete connections[socket.id];
 
     });
-
-
     console.log('Disconnected: %s sockets connected', Object.keys(connections).length)
 });
 
@@ -179,6 +195,11 @@ function emitToLobby(conn_array, event_name, lobby_id, obj_to_emit) {
             connection.emit(event_name, obj_to_emit);
         }
     }
+}
+
+
+function getSocketIdByUsername(username) {
+
 }
 
 /**
@@ -276,7 +297,7 @@ app.get('/lobby/:id', function (req, res) {
 });
 
 //API - Check username
-app.use('/checkusername',function(req,res){
+app.use('/checkusername', function (req, res) {
     var username = req.body.username;
     res.send(checkUserNameValid(username));
 });
@@ -290,27 +311,26 @@ app.use('/checkusername',function(req,res){
  * @param username
  * @returns {{error_msg: string, valid: boolean, users}}
  */
-function checkUserNameValid(username){
+function checkUserNameValid(username) {
     var valid = false;
     var msg = '';
+    var min_length = 5;
+    var max_length = 13;
 
-    if(username.length <4){
-        msg = "The username is too short (must be longer than 8 characters)";
+    if (username.length < min_length) {
+        msg = "The username is too short (must be a minimum of  " + (min_length) + " characters)";
         valid = false;
-    }
-    else if (username.length > 13){
-        msg = "The username is too long (max 13 characters)";
+    } else if (username.length > 13) {
+        msg = "The username is too long (max " + max_length + " characters)";
         valid = false;
-    }
-    else if (userNameTaken(username) === true){
+    } else if (userNameTaken(username) === true) {
         valid = false;
         msg = "This username is already taken";
-    }
-    else{
+    } else {
         valid = true;
     }
 
-    return {error_msg:msg, valid: valid,users: users}
+    return {error_msg: msg, valid: valid, users: users}
 }
 
 /**
@@ -318,26 +338,36 @@ function checkUserNameValid(username){
  * @param username
  * @returns {boolean}
  */
-function userNameTaken(username){
-    var remove_keys = Object.keys(users).map(function (key) {
-        return users[key];
-    });
+function userNameTaken(username) {
+    var remove_keys = rawObject(users);
 
-    var usernamesArray = Object.keys(remove_keys).map(function(k){
+    var usernamesArray = Object.keys(remove_keys).map(function (k) {
         return remove_keys[k].username;
     });
 
-    //Return an array of usernames
-   return Boolean (Object.values(usernamesArray).indexOf(username) > -1);
+    //Return true or false
+    return Boolean(Object.values(usernamesArray).indexOf(username) > -1);
 }
+
+function getUserSocketId(username) {
+    var r_users = rawObject(users);
+
+    for (user in r_users) {
+        if (r_users[user].username === username) {
+            return r_users[user].id
+        }
+    }
+    return false;
+}
+
 
 /**
  * Returns object without first keys
  * @param object
  * @returns {*[]}
  */
-function rawObject(object){
-   return Object.keys(object).map(function (key) {
+function rawObject(object) {
+    return Object.keys(object).map(function (key) {
         return object[key];
     });
 }
