@@ -5,7 +5,7 @@ $(document).ready(function () {
 //**********************************************************************************************************************
     var local = true;
     var local_address = 'http://localhost:4000';
-    var server_address = 'http://52.33.25.101';
+    var server_address = 'http://3.8.140.68';
     var address_to_use = local ? local_address : server_address;
 
     //Emit Socket events

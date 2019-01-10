@@ -1,4 +1,4 @@
-var local = true;
+var local = false;
 var local_storage_enable = true;
 var local_address = 'http://localhost:4000';
 var server_address = 'http://3.8.140.68';
