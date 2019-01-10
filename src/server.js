@@ -4,15 +4,15 @@
 const express = require('express'),
     app = express(),
     bodyParser = require('body-parser');
-
-const local = false;
+const cors = require('cors')
+const local = true;
 const dir = __dirname;
 const directory_separator = local ? '\\' : '/';
 const base_directory = dir.substr(0, dir.lastIndexOf(directory_separator));
 
 //if local deploy on 4000 else 80
 var port = local ? 4000 : 80;
-
+app.use(cors());
 
 //Server
 var server = app.listen(port, function () {
@@ -39,6 +39,7 @@ var Message = function (lobby_id = false, type, message_body, username) {
 
 //Keep track of connections, users and instruments
 var connections = {};
+var registered_connections = {};
 var users = {};
 var available_instruments_1 = ['guitar', 'vox', 'drums'];
 var available_instruments_2 = ['guitar', 'vox', 'drums'];
@@ -56,13 +57,18 @@ io.on('connection', function (socket) {
     var id = Math.floor(Math.random() * 9999) + 1001;
     //Give this socket the new id
     socket.id = id;
-    //Add to connections array
+    //Add to socket go connections array
     connections[socket.id] = socket;
 
     //Array to use
     var available_instr_array = socket.lobby == 1 ? available_instruments_1 : available_instruments_2;
 
-    emitToLobby(connections, 'get_instruments', socket.lobby, available_instr_array);
+    //can send this to all connections
+
+    setInterval(function () {
+        emitToLobby(connections, 'get_instruments', socket.lobby, available_instr_array);
+    }, 500);
+
 
     socket.on("request_lobby_info", function (data) {
         socket.emit('get_lobby_info', rawObject(users));
@@ -70,6 +76,9 @@ io.on('connection', function (socket) {
 
     // New user
     socket.on("new_user", function (data, callback) {
+
+        //Add as registered user
+        registered_connections[socket.id] = socket;
 
         var user = data;
         var connection_message = user.username + " has joined the lobby";
@@ -99,9 +108,9 @@ io.on('connection', function (socket) {
         }
 
         //Send messages to client
-        emitToLobby(connections, 'new_message', lobby_id, new Message(false, 'info_join', connection_message, ''));
-        updateUsernames(connections, id, lobby_id);
-        emitToLobby(connections, 'get_instruments', lobby_id, available_instr_array);
+        emitToLobby(registered_connections, 'new_message', lobby_id, new Message(false, 'info_join', connection_message, ''));
+        updateUsernames(registered_connections, id, lobby_id);
+        emitToLobby(registered_connections, 'get_instruments', lobby_id, available_instr_array);
     });
 
 
@@ -119,19 +128,20 @@ io.on('connection', function (socket) {
             case 'private':
                 if (recipient) {
                     var recipient_id = getUserSocketId(recipient);
-                    connections[recipient_id].emit("new_message", message);
+                    if(registered_connections[recipient_id]!== undefined) {
+                        registered_connections[recipient_id].emit("new_message", message);
+                        //set sender to this socket
+                        message.sender = registered_connections[socket.id].username;
 
-                    //set sender to this socket
-                    message.sender = connections[socket.id].username;
-
-                    if (connections[recipient_id] !== connections[socket.id]) {
-                        connections[socket.id].emit("new_message", message);
+                        if (registered_connections[recipient_id] !== registered_connections[socket.id]) {
+                            registered_connections[socket.id].emit("new_message", message);
+                        }
                     }
                 }
                 break;
             case 'public':
                 //emit to users in this lobby
-                emitToLobby(connections, 'new_message', this_lobby_id, message);
+                emitToLobby(registered_connections, 'new_message', this_lobby_id, message);
                 break;
         }
     });
@@ -140,7 +150,7 @@ io.on('connection', function (socket) {
     socket.on("send_key", function (data) {
         var this_lobby_id = socket.lobby;
 
-        emitToLobby(connections, 'get_key', this_lobby_id, data)
+        emitToLobby(registered_connections, 'get_key', this_lobby_id, data)
     });
 
     //Respond to stop timeout
@@ -161,11 +171,12 @@ io.on('connection', function (socket) {
 
         delete users[socket.id];
 
+        updateUsernames(registered_connections, id, lobby_id);
         updateUsernames(connections, id, lobby_id);
 
         //send user connected message
         if (username.length > 0) {
-            emitToLobby(connections, 'new_message', lobby_id, new Message(false, 'info_leave', connection_message, ''));
+            emitToLobby(registered_connections, 'new_message', lobby_id, new Message(false, 'info_leave', connection_message, ''));
         }
 
         //Make instrument available
@@ -175,11 +186,20 @@ io.on('connection', function (socket) {
                 available_instr_array.push(instrument);
             }
         }
-        emitToLobby(connections, 'get_instruments', lobby_id, available_instr_array);
+
+        setInterval(function () {
+            emitToLobby(connections, 'get_instruments', lobby_id, available_instr_array);
+            emitToLobby(registered_connections, 'get_instruments', lobby_id, available_instr_array);
+        }, 300);
+
+
+
         delete connections[socket.id];
+        delete registered_connections[socket.id];
 
     });
-    console.log('Disconnected: %s sockets connected', Object.keys(connections).length)
+    console.log('Disconnected: %s sockets connected', Object.keys(registered_connections).length)
+    console.log('Disconnected: %s unregistered sockets connected', Object.keys(connections).length)
 });
 
 

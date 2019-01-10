@@ -1,4 +1,4 @@
-var local = false;
+var local = true;
 var local_storage_enable = false;
 var local_address = 'http://localhost:4000';
 var server_address = 'http://3.8.140.68';
@@ -60,6 +60,8 @@ $(document).ready(function () {
             var users = model.users;
 
             var html = '';
+            $('.instr-header').find('span').html("");
+            //Loop throuhg users and build list items in the User navigation list
             users.forEach(function (user) {
                 var img = '<img class="leader-img" src="/images/crown.png">';
                 var img_inc = user.type === 'leader' ? img : '';
@@ -75,7 +77,7 @@ $(document).ready(function () {
                     '<span class="li-' + instr + '">' + instr + '</span>' +
                     '<ul class="context-menu hidden"><li class="whisper">whisper</li></ul></li>';
 
-                $('body').find('.instr-header[data-instrument="' + instr + '"]').find('span').html('<span class="user-header li-' + instr + '">' + "  " + username + '</span>');
+                $('.instr-header[data-instrument="' + instr + '"]').find('span').html('<span class="user-header li-' + instr + '">' + "  " + username + '</span>');
             });
             this.element.innerHTML = html;
         }
@@ -132,6 +134,8 @@ $(document).ready(function () {
     //Emit Socket events
     var query_lobby = 'lobby_id=' + $lobby_id.val();
     var socket = io.connect(address_to_use, {query: query_lobby});
+
+    var all_instruments = ['guitar', 'vox', 'drums'];
 
 //**********************************************************************************************************************
 // Socket Listen / Emit functionality
@@ -206,7 +210,7 @@ $(document).ready(function () {
     socket.on('get_instruments', function (data) {
 
         //disable and uncheck items in data and default to first other option
-        for (i = 0; i < data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
 
             var instrument = data[i];
             var target_instr = $(":radio[value=" + instrument + "]");
@@ -214,6 +218,20 @@ $(document).ready(function () {
             if (target_instr !== undefined) {
                 target_instr.closest('div').removeClass('hidden');
             }
+        }
+
+        var taken_instruments = $(all_instruments).not(data).get();
+
+        if(taken_instruments.length === all_instruments.length){
+            console.log("lobby full bye");
+        }
+
+        console.log(taken_instruments.length);
+        //Hide taken instruments
+        for (let i = 0; i < taken_instruments.length; i++) {
+            console.log(taken_instruments[i]);
+            $(":radio[value=" + taken_instruments[i] + "]").closest('div').addClass('hidden');
+
         }
     });
 
@@ -411,7 +429,7 @@ $(document).ready(function () {
                         break;
                 }
 
-                var keydiv = '<div class="col-md-1 audio-box" ' +
+                var keydiv = '<div class="col-md-1 col-xs-3 audio-box" ' +
                     'style="background-image: linear-gradient(to bottom right, ' + color_to_use + ', ' + color_to_use_grad + ');"' +
                     'id="div_' + filename + '">' + filename + '<p>[' + char + ']</p></div>';
                 instrument_wrapper += (keydiv);

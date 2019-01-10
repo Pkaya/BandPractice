@@ -81,7 +81,8 @@ body, html {
 
 .pressed-border{
     border: 2px solid #b9ddf4;
-    border-radius: 100%;
+    background-color: #b9ddf4;
+    border-radius: 2em;
     -webkit-box-shadow: 0 0 5px 2px #70bcf4;
     -moz-box-shadow: 0 0 5px 2px #70bcf4;
     box-shadow: 0 0 5px 2px #70bcf4;
