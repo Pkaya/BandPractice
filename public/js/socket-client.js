@@ -1,4 +1,5 @@
 var local = false;
+
 var local_storage_enabled = true;
 var local_address = 'http://localhost:4000';
 var server_address = 'http://3.8.140.68';
@@ -526,13 +527,13 @@ $(document).ready(function () {
         socket.emit('ping');
     }, 10000);
 
-    //This is not ideal but jquery is bugging when I try to directly set the radio button
-    // setting anything else works but not this :(
-    setTimeout(function () {
-        setChecked()
-    }, 120);
-
-    setChecked();
+    // //This is not ideal but jquery is bugging when I try to directly set the radio button
+    // // setting anything else works but not this :(
+    // setTimeout(function () {
+    //     setChecked()
+    // }, 120);
+    //
+    // setChecked();
 
 
     //Show how many characters have been typed
