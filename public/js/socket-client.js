@@ -1,7 +1,7 @@
-var local = true;
+var local = false;
 var local_storage_enable = false;
 var local_address = 'http://localhost:4000';
-var server_address = 'http://52.33.25.101';
+var server_address = 'http://3.8.140.68';
 var address_to_use = local ? local_address : server_address;
 
 $(document).ready(function () {
@@ -453,7 +453,7 @@ $(document).ready(function () {
      * Dispaly container which has lobby specific content
      */
     function showLobbyContainer() {
-        
+
         var items_to_show = [$div_lobby_container, $user_navbar];
 
         if(local_storage_enable){
