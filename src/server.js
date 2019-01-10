@@ -70,12 +70,12 @@ io.on('connection', function (socket) {
         emitToLobby(connections, 'get_instruments', socket.lobby, available_instr_array);
     }, 500);
 
-
+    //When lobby info requested sends user data
     socket.on("request_lobby_info", function (data) {
         socket.emit('get_lobby_info', rawObject(users));
     });
 
-    // New user
+    // New user - add user to userlist and call updateUsers and new_message event
     socket.on("new_user", function (data, callback) {
 
         //Add as registered user
@@ -154,12 +154,12 @@ io.on('connection', function (socket) {
         emitToLobby(registered_connections, 'get_key', this_lobby_id, data)
     });
 
-    //Respond to stop timeout
+    //Respond to stop timeout - to stop scoket.io from performing the disconnect timeout
     socket.on("ping", function () {
         socket.emit("pong");
     });
 
-    //Delete users
+    //Delete users - deletes registered and non registered users
     socket.on("disconnect", function () {
         console.log("disconnect requested");
         var username = chkProperty(users[socket.id], 'username');
@@ -199,6 +199,8 @@ io.on('connection', function (socket) {
         delete registered_connections[socket.id];
 
     });
+
+
     console.log('Disconnected: %s sockets connected', Object.keys(registered_connections).length)
     console.log('Disconnected: %s unregistered sockets connected', Object.keys(connections).length)
 });
@@ -207,7 +209,13 @@ io.on('connection', function (socket) {
 //**********************************************************************************************************************
 // Socket functions and helper methods
 //**********************************************************************************************************************
-
+/**
+ * Emit to certain users in lobby
+ * @param conn_array
+ * @param event_name
+ * @param lobby_id
+ * @param obj_to_emit
+ */
 function emitToLobby(conn_array, event_name, lobby_id, obj_to_emit) {
     for (var i in conn_array) {
         let connection = conn_array[i];
@@ -216,11 +224,6 @@ function emitToLobby(conn_array, event_name, lobby_id, obj_to_emit) {
             connection.emit(event_name, obj_to_emit);
         }
     }
-}
-
-
-function getSocketIdByUsername(username) {
-
 }
 
 /**
