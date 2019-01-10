@@ -198,6 +198,9 @@ body, html {
 #div_chat_box{
     border: #e2e2e2 2px solid;
     min-height:300px;
+    height:300px;
+    overflow-x:visible;
+    overflow-y: scroll;
 }
 .leader-img{
     width: 15px;

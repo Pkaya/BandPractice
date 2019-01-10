@@ -1,5 +1,5 @@
 var local = false;
-var local_storage_enable = true;
+var local_storage_enabled = true;
 var local_address = 'http://localhost:4000';
 var server_address = 'http://3.8.140.68';
 var address_to_use = local ? local_address : server_address;
@@ -181,6 +181,7 @@ $(document).ready(function () {
 
     //LocalStorage
     var username_local = localStorage.getItem('username');
+    var instrument_local = localStorage.getItem('instrument');
 
     //Initially hide the lobby containers
     hideLobbyContainer();
@@ -264,12 +265,19 @@ $(document).ready(function () {
     //[2] Send this new user - send username lobby and instrument selected to server
     $user_form.on("submit", function (e) {
         e.preventDefault();
-
+        e.stopPropagation();
         //Send ajax request
         $.post(address_to_use + '/checkusername', {username: $user_name.val()}, function (data) {
             if (data.valid) {
                 $errors.addClass('hidden');
                 var $sel_instrument_val = $("input[name=optinstrument]:checked").val();
+
+                if(local_storage_enabled){
+                    if(instrument_local!== null) {
+                        $sel_instrument_val = instrument_local;
+                    }
+                }
+
                 var user = new User($lobby_id.val(), $user_name.val(), $sel_instrument_val);
 
                 buildInstruments();
@@ -280,8 +288,10 @@ $(document).ready(function () {
                         //add user to observer pattern
                         usermodel.addThisUser(data);
                         var username = data.username;
-                        if(local_storage_enable) {
+                        var instrument = data.instrument;
+                        if(local_storage_enabled) {
                             localStorage.setItem('username', username);
+                            localStorage.setItem('instrument',instrument)
                         }
                         showLobbyContainer();
                         $('.span-username').html(username);
@@ -476,7 +486,7 @@ $(document).ready(function () {
 
         var items_to_show = [$div_lobby_container, $user_navbar];
 
-        if(local_storage_enable){
+        if(local_storage_enabled){
             items_to_show.push($signed_in);
             items_to_show.push($btn_logout)
         }
@@ -568,7 +578,7 @@ $(document).ready(function () {
     })
 
     //Sign in automatically if localstorage exists
-    if(local_storage_enable) {
+    if(local_storage_enabled) {
         if (username_local) {
             if (username_local.length > 0) {
                 $signed_in.find('span').html(' ' + username_local);
@@ -579,13 +589,28 @@ $(document).ready(function () {
     }
 
     //Delete localStorage when logged out
-    if(local_storage_enable) {
+    if(local_storage_enabled) {
         $btn_logout.on("click", function () {
             if (username_local) {
                 localStorage.removeItem('username');
             }
+            if(instrument_local){
+                localStorage.removeItem('instrument');
+            }
             location.reload();
         })
     }
+
+    //scroll chat
+    setInterval(function () {
+        $('#div_chat_box').animate({
+            scrollTop: $('#div_chat_box').get(0).scrollHeight
+        }, 700);
+    }, 700);
+
+
+
+
+
 });//end ready
 

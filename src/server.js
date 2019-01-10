@@ -1,11 +1,12 @@
 //**********************************************************************************************************************
 // Initiation Code
 //**********************************************************************************************************************
+const local = false;
 const express = require('express'),
     app = express(),
     bodyParser = require('body-parser');
 const cors = require('cors')
-const local = false;
+
 const dir = __dirname;
 const directory_separator = local ? '\\' : '/';
 const base_directory = dir.substr(0, dir.lastIndexOf(directory_separator));
