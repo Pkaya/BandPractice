@@ -183,6 +183,16 @@ body, html {
 #instrument_box{
     min-height:400px;
     border: #e2e2e2 2px solid;
+    cursor:pointer;
+}
+
+.tip-text{
+    font-weight:bold
+}
+
+.instr-box-link{
+    color: dodgerblue;
+    cursor:pointer;
 }
 
 #div_chat_box{

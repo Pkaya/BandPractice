@@ -1,5 +1,5 @@
 var local = true;
-var local_storage_enable = false;
+var local_storage_enable = true;
 var local_address = 'http://localhost:4000';
 var server_address = 'http://3.8.140.68';
 var address_to_use = local ? local_address : server_address;
@@ -70,8 +70,7 @@ $(document).ready(function () {
                 var username = user.username;
                 var span_username = '<span class="span-username">' + username + '</span>';
 
-                //Build the list item
-
+                //Build the list item for user navigation
                 html +=
                     '<li class="li-users"data-id="' + user.id + '" data-leader="' + leader + '">' + span_username + ' ' + img_inc + ' ' +
                     '<span class="li-' + instr + '">' + instr + '</span>' +
@@ -87,6 +86,7 @@ $(document).ready(function () {
      * Outputs message history to console for the moment
      */
     class messagesObserver {
+        //Todo write functionality to return last message when pressing up in input box
         constructor(elementId) {
         }
 
@@ -103,46 +103,7 @@ $(document).ready(function () {
     usermodel.addObserver(user_list_observer);
     usermodel.addObserver(consoleObserver);
 
-
-//**********************************************************************************************************************
-// Initiation Code
-//**********************************************************************************************************************
-
-    //DOM localStorage
-    var $btn_logout = $('.btn-logout');
-    var $signed_in = $('.signed-in');
-    //DOM Login
-    var $user_form_area = $("#div_user_form_area");
-    var $user_form = $("#frm_user_form");
-    var $user_name = $("#txt_username");
-    var $errors = $("#div_errors");
-
-    //DOM Chat
-    var $chat_box = $("#div_chat_box");
-    var $txt_message = $("#txt_message");
-    var $lobby_id = $("#hid_lobby_id");
-    var $frm_message = $("#frm_message");
-    var $div_lobby_container = $("#div_lobby_container");
-    var $user_navbar = $(".user-navbar");
-
-    //LocalStorage
-    var username_local = localStorage.getItem('username');
-
-    //Initially hide the lobby containers
-    hideLobbyContainer();
-
-    //Emit Socket events
-    var query_lobby = 'lobby_id=' + $lobby_id.val();
-    var socket = io.connect(address_to_use, {query: query_lobby});
-
-    var all_instruments = ['guitar', 'vox', 'drums'];
-
-//**********************************************************************************************************************
-// Socket Listen / Emit functionality
-//**********************************************************************************************************************
-    // [1] Events which only listen to server
-    // [2] Events which emit to server
-    // [3] Events which listen to server and emit to server
+    //Other class definitions
 
     /**
      * Message class
@@ -195,6 +156,48 @@ $(document).ready(function () {
         }
     };
 
+
+//**********************************************************************************************************************
+// Initiation Code
+//**********************************************************************************************************************
+    //DOM localStorage
+    var $btn_logout = $('.btn-logout');
+    var $signed_in = $('.signed-in');
+
+    //DOM Login
+    var $user_form_area = $("#div_user_form_area");
+    var $user_form = $("#frm_user_form");
+    var $user_name = $("#txt_username");
+    var $errors = $("#div_errors");
+
+    //DOM Chat
+    var $chat_box = $("#div_chat_box");
+    var $txt_message = $("#txt_message");
+    var $lobby_id = $("#hid_lobby_id");
+    var $frm_message = $("#frm_message");
+    var $div_lobby_container = $("#div_lobby_container");
+    var $user_navbar = $(".user-navbar");
+    var $instrument_box = $("#instrument_box");
+
+    //LocalStorage
+    var username_local = localStorage.getItem('username');
+
+    //Initially hide the lobby containers
+    hideLobbyContainer();
+
+    //Emit Socket events
+    var query_lobby = 'lobby_id=' + $lobby_id.val();
+    var socket = io.connect(address_to_use, {query: query_lobby});
+
+    var all_instruments = ['guitar', 'vox', 'drums'];
+
+//**********************************************************************************************************************
+// Socket Listen / Emit functionality
+//**********************************************************************************************************************
+    // [1] Events which only listen to server
+    // [2] Events which emit to server
+    // [3] Events which listen to server and emit to server
+
     //[1] Listen for new message from server
     socket.on('new_message', function (data) {
         usermodel.addToMessages(data);
@@ -221,15 +224,12 @@ $(document).ready(function () {
         }
 
         var taken_instruments = $(all_instruments).not(data).get();
-
         if(taken_instruments.length === all_instruments.length){
-            console.log("lobby full bye");
+            // Todo Lobby full action
         }
 
-        console.log(taken_instruments.length);
         //Hide taken instruments
         for (let i = 0; i < taken_instruments.length; i++) {
-            console.log(taken_instruments[i]);
             $(":radio[value=" + taken_instruments[i] + "]").closest('div').addClass('hidden');
 
         }
@@ -256,7 +256,7 @@ $(document).ready(function () {
         var key = new Key($lobby_id.val(), $sel_instrument_val, key_char);
 
         //Send keycode only if lobby div is visibile and box is active
-        if ($div_lobby_container.is(":visible") && $('#instrument_box').hasClass("box-active")) {
+        if ($div_lobby_container.is(":visible") && $instrument_box.hasClass("box-active")) {
             socket.emit('send_key', key);
         }
     });
@@ -334,20 +334,23 @@ $(document).ready(function () {
      */
     function printMessage(data) {
         var message = data;
+        var timestamp = message.timestamp;
+        var username = message.username;
+        var message_body = message.message_body;
 
         switch (message.type) {
             case 'public':
-                $chat_box.append("<p>" + data.timestamp + ":" + "<b>" + data.username + " ></b>" + data.message_body + "</p>");
+                $chat_box.append("<p>" + timestamp + ":" + "<b>" + username + " ></b>" + message_body + "</p>");
                 break;
             case 'private':
-                $chat_box.append("<p class='whisper'>" + data.timestamp + ":" + "" +
-                    "<b> From" + data.username + "</b> > to <b>" + data.recipient + ":</b>" + data.message_body + "</p>");
+                $chat_box.append("<p class='whisper'>" + timestamp + ":" + "" +
+                    "<b>&nbsp;From&nbsp;" + username + "</b> > to <b>" + data.recipient + ":</b>" + message_body + "</p>");
                 break;
             case 'info_join':
-                $chat_box.append("<p><i class='lobby-join'>" + data.timestamp + ":" + data.message_body + "</i></p>");
+                $chat_box.append("<p><i class='lobby-join'>" + timestamp + ":" + message_body + "</i></p>");
                 break;
             case 'info_leave':
-                $chat_box.append("<p><i class='red'>" + data.timestamp + ":" + data.message_body + "</i></p>");
+                $chat_box.append("<p><i class='red'>" + timestamp + ":" + message_body + "</i></p>");
                 break;
         }
     }
@@ -383,7 +386,6 @@ $(document).ready(function () {
      * Build all instruments
      */
     function buildInstruments() {
-        var $instrument_box = $("#instrument_box");
 
         loopthroughAssociativeArray(sounds, function (val, idx) {
             var instr_name = Object.keys(sounds)[idx];
@@ -536,7 +538,7 @@ $(document).ready(function () {
     //Event delegation  on clicking whisper from context menu
     $user_navbar.on("click", ".whisper", function () {
         var username = $(this).parent().parent().find('.span-username').html();
-        $txt_message.val("/w " + username + " ").trigger("focus");
+        $txt_message.val("/w " + username + " ").trigger("focus").trigger("click");
 
         //Weird bug this isn't working for some reason
         $(this).parent().addClass("hidden");
@@ -549,7 +551,7 @@ $(document).ready(function () {
         $(this).closest('.form-control').siblings().removeClass('pressed-border');
     });
 
-    $("#instrument_box").on("click", function () {
+    $instrument_box.on("click", function () {
         $(this).addClass("box-active");
         $txt_message.removeClass("box-active");
     });
@@ -557,8 +559,13 @@ $(document).ready(function () {
     //when the message box is clicked
     $txt_message.on("click", function () {
         $(this).addClass("box-active");
-        $("#instrument_box").removeClass("box-active");
+        $instrument_box.removeClass("box-active");
+        $(".tip-text").removeClass('hidden').effect("slide");
     });
+
+    $('.instr-box-link').on("click",function(){
+        $instrument_box.trigger('click');
+    })
 
     //Sign in automatically if localstorage exists
     if(local_storage_enable) {
@@ -580,6 +587,5 @@ $(document).ready(function () {
             location.reload();
         })
     }
-
 });//end ready
 

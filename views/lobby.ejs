@@ -8,6 +8,10 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="/css/style.css">
 <link rel="stylesheet" type="text/css" href="/css/qunit-2.4.0.css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+
+<script src="//code.jquery.com/jquery-1.12.4.js"></script>
+<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.dev.js"></script>
 <script src="/js/qunit-2.4.0.js"></script>
 <body>
@@ -36,6 +40,7 @@
     <div id="div_user_form_area" class="">
         <div class="row"><h1>Choose instrument and enter a username</h1></div>
         <br>
+
         <div class="row instrument-row">
             <div class="form-control radio-inline pressed-border col-md-3 hidden"><label>
                 <input type="radio" value="guitar" class="opt-instrument hidden" name="optinstrument">Guitar</label>
@@ -78,6 +83,7 @@
     <div id="div_lobby_container">
         <div class="row">
             <div id="instrument_box" class="col-md-12 select-box box-active"></div>
+            <h6 class="tip-text hidden">select <span class="instr-box-link">instrument box</span> to play music again</h6>
         </div>
         <br>
 
